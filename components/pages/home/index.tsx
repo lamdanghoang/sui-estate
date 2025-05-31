@@ -3,21 +3,11 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import MintModal from "@/components/MintModal";
+import { Property } from "@/types/interface";
 
 const MapViewComponent = dynamic(() => import("@/components/map/Map"), {
   ssr: false, // Prevents server-side rendering
 });
-
-interface Property {
-  id: string;
-  name: string;
-  coordinates: [number, number];
-  owner: string;
-  price: number;
-  image?: string;
-  description?: string;
-  isListed?: boolean;
-}
 
 const HomePage = () => {
   const [isWalletConnected, setIsWalletConnected] = useState(false);

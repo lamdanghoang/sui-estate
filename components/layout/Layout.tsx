@@ -26,7 +26,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
-        <WalletProvider>
+        <WalletProvider autoConnect>
           {/* <div className="flex flex-col min-h-screen items-center"> */}
           <Header />
           <main className="flex-1">{children}</main>

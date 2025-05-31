@@ -16,17 +16,7 @@ import { toast } from "sonner";
 import PropertyCard from "@/components/pages/properties/PropertyCard";
 import ListPropertyModal from "@/components/pages/marketplace/ListPropertyModal";
 import BuyPropertyModal from "@/components/pages/marketplace/BuyPropertyModal";
-
-interface Property {
-  id: string;
-  name: string;
-  coordinates: [number, number];
-  owner: string;
-  price: number;
-  image?: string;
-  description?: string;
-  isListed?: boolean;
-}
+import { Property } from "@/types/interface";
 
 const MarketplacePage = () => {
   const [searchTerm, setSearchTerm] = useState("");

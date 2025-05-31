@@ -8,8 +8,8 @@ const Header = () => {
 
   const navigationItems = [
     { label: "Explore", path: "/", icon: Map },
-    { label: "My Properties", path: "/properties", icon: Home },
     { label: "Marketplace", path: "/marketplace", icon: Plus },
+    { label: "My Properties", path: "/properties", icon: Home },
   ];
 
   return (

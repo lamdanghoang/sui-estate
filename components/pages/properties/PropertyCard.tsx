@@ -2,16 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, DollarSign, Eye, ShoppingCart } from "lucide-react";
-
-interface Property {
-  id: string;
-  name: string;
-  coordinates: [number, number];
-  owner: string;
-  price: number;
-  image?: string;
-  description?: string;
-}
+import { Property } from "@/types/interface";
 
 interface PropertyCardProps {
   property: Property;

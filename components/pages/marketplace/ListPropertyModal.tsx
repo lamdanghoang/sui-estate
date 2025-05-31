@@ -18,16 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { DollarSign, Tag } from "lucide-react";
-
-interface Property {
-  id: string;
-  name: string;
-  coordinates: [number, number];
-  owner: string;
-  price: number;
-  image?: string;
-  description?: string;
-}
+import { Property } from "@/types/interface";
 
 interface ListPropertyModalProps {
   isOpen: boolean;

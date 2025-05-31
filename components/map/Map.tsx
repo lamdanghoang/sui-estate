@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Map from "@arcgis/core/Map";
 import MapView from "@arcgis/core/views/MapView";
 import Graphic from "@arcgis/core/Graphic";
@@ -10,11 +10,11 @@ import AddressCandidate from "@arcgis/core/rest/support/AddressCandidate.js";
 import "@arcgis/core/assets/esri/themes/light/main.css";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, DollarSign, User, Eye, Plus } from "lucide-react";
+import { MapPin, Plus } from "lucide-react";
 import { toast } from "sonner";
 import * as locator from "@arcgis/core/rest/locator";
 import SearchBar from "../pages/home/SearchBar";
+import PropertyPopup from "../pages/home/PropertyPopup";
 
 interface Property {
   id: string;
@@ -401,74 +401,10 @@ const MapViewComponent = ({
 
       {/* Property Info Popup */}
       {selectedProperty && (
-        <Card className="absolute top-20 right-6 p-4 glassmorphism max-w-sm animate-scale-in">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-white">
-              {selectedProperty.name}
-            </h3>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => setSelectedProperty(null)}
-              className="text-gray-400 hover:text-white"
-            >
-              ×
-            </Button>
-          </div>
-
-          {selectedProperty.image && (
-            <img
-              src={selectedProperty.image}
-              alt={selectedProperty.name}
-              className="w-full h-32 object-cover rounded-lg mb-3"
-            />
-          )}
-
-          <div className="space-y-2 text-sm mb-4">
-            <div className="flex items-center space-x-2">
-              <User className="w-4 h-4 text-gray-400" />
-              <span className="text-gray-300">Owner:</span>
-              <span className="text-white font-mono text-xs">
-                {selectedProperty.owner.slice(0, 6)}...
-                {selectedProperty.owner.slice(-4)}
-              </span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <DollarSign className="w-4 h-4 text-green-400" />
-              <span className="text-gray-300">Price:</span>
-              <Badge
-                variant="outline"
-                className="text-green-400 border-green-400"
-              >
-                {selectedProperty.price} SUI
-              </Badge>
-            </div>
-            {selectedProperty.isListed && (
-              <Badge className="bg-green-500/20 text-green-400 border-green-400">
-                Listed for Sale
-              </Badge>
-            )}
-          </div>
-
-          <div className="flex space-x-2">
-            {selectedProperty.isListed ? (
-              <Button size="sm" className="flex-1 bg-gradient-web3">
-                Buy Property
-              </Button>
-            ) : (
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1 border-gray-600"
-              >
-                Not Listed
-              </Button>
-            )}
-            <Button size="sm" variant="outline" className="border-gray-600">
-              <Eye className="w-4 h-4" />
-            </Button>
-          </div>
-        </Card>
+        <PropertyPopup
+          property={selectedProperty}
+          onSelectProperty={setSelectedProperty}
+        />
       )}
     </div>
   );

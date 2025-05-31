@@ -1,5 +1,6 @@
 import { Map, Home, Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { CustomBtn } from "../wallet/ConnectButton";
 
 const Header = () => {
   const router = useRouter();
@@ -8,15 +9,11 @@ const Header = () => {
   const navigationItems = [
     { label: "Explore", path: "/", icon: Map },
     { label: "My Properties", path: "/properties", icon: Home },
-    { label: "Mint", path: "/mint", icon: Plus },
+    { label: "Marketplace", path: "/marketplace", icon: Plus },
   ];
 
-  // const formatAddress = (address: string) => {
-  //   return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  // };
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glassmorphism border-b border-white/10">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-web3-purple-dark/90 backdrop-blur-md border-b border-white/10">
       <div className="mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo and Brand */}
         <div className="flex items-center space-x-3">
@@ -49,6 +46,11 @@ const Header = () => {
             );
           })}
         </nav>
+
+        {/* Connect button */}
+        <div className="hidden md:block">
+          <CustomBtn />
+        </div>
       </div>
     </header>
   );

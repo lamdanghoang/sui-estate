@@ -217,13 +217,13 @@ const MarketplacePage = () => {
                   placeholder="Search properties..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-gray-800 border-gray-600 text-gray-700"
+                  className="pl-10 bg-white border-gray-600 text-gray-700"
                 />
               </div>
               <div className="flex items-center space-x-2">
-                <Filter className="w-4 h-4 text-gray-400" />
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-48 bg-gray-800 border-gray-600 text-gray-700">
+                  <SelectTrigger className="w-48 bg-white border-gray-600 text-gray-700">
+                    <Filter className="w-4 h-4 text-gray-400" />
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

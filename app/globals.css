@@ -1,26 +1,156 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: hsl(240 10% 3.9%);
+  --foreground: hsl(0 0% 98%);
+
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(222 47% 11%);
+
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(222 47% 11%);
+
+  --primary: hsl(263 70% 50%);
+  --primary-foreground: hsl(0 0% 98%);
+
+  --secondary: hsl(240 3.7% 15.9%);
+  --secondary-foreground: hsl(0 0% 98%);
+
+  --muted: hsl(210 40% 96.1%);
+  --muted-foreground: hsl(215.4 16.3% 46.9%);
+
+  --accent: hsl(262 83% 58%);
+  --accent-foreground: hsl(210 40% 98%);
+
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(210 40% 98%);
+
+  --border: hsl(214.3 31.8% 91.4%);
+  --input: hsl(214.3 31.8% 91.4%);
+  --ring: hsl(263 70% 50%);
+
+  --radius: 0.5rem;
+
+  --sidebar-background: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(263 70% 50%);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(263 70% 50%);
+
+  --brand-50: #f3f4ff;
+  --brand-100: #e9eaff;
+  --brand-200: #d6d8ff;
+  --brand-300: #b9b9ff;
+  --brand-400: #9990ff;
+  --brand-500: #7c67fa;
+  --brand-600: #6d46f0;
+  --brand-700: #5e37d7;
+  --brand-800: #4d2eab;
+  --brand-900: #402889;
+
+  --fund-50: #edf9ff;
+  --fund-100: #d6f1ff;
+  --fund-200: #b5e8ff;
+  --fund-300: #83ddff;
+  --fund-400: #48c7ff;
+  --fund-500: #1fa7ff;
+  --fund-600: #0986f5;
+  --fund-700: #0986f5;
+  --fund-800: #1158af;
+  --fund-900: #134b8c;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-purple: var(--purple);
+  --color-purple-dark: var(--purple-dark);
+  --color-blue: var(--blue);
+  --color-blue-dark: var(--blue-dark);
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+
+  --color-fund-50: var(--fund-50);
+  --color-fund-100: var(--fund-100);
+  --color-fund-200: var(--fund-200);
+  --color-fund-300: var(--fund-300);
+  --color-fund-400: var(--fund-400);
+  --color-fund-500: var(--fund-500);
+  --color-fund-600: var(--fund-600);
+  --color-fund-700: var(--fund-700);
+  --color-fund-800: var(--fund-800);
+  --color-fund-900: var(--fund-900);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  .map-container {
+    width: 100%;
+    height: 100vh;
+  }
+
+  .glassmorphism {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* ArcGIS specific styles */
+  .esri-view {
+    height: 100%;
+    width: 100%;
+  }
+
+  .esri-ui-corner .esri-component {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
 }

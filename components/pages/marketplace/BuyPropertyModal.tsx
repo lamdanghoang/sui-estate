@@ -62,9 +62,9 @@ const BuyPropertyModal = ({
           {/* Property Details */}
           <Card className="p-4 bg-gray-800/50 border-gray-600">
             <div className="space-y-3">
-              {property.image && (
+              {property.images && (
                 <img
-                  src={property.image}
+                  src={property.images[0]}
                   alt={property.name}
                   className="w-full h-32 object-cover rounded-lg"
                 />

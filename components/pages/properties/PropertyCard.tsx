@@ -27,9 +27,9 @@ const PropertyCard = ({
     <Card className="flex flex-col h-full py-0 gap-0 overflow-hidden glassmorphism border-gray-700 hover:border-web3-purple transition-all duration-300 hover:shadow-lg hover:shadow-web3-purple/20 animate-fade-in">
       {/* Property Image */}
       <div className="aspect-video relative overflow-hidden">
-        {property.image ? (
+        {property.images ? (
           <img
-            src={property.image}
+            src={property.images[0]}
             alt={property.name}
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
           />
@@ -59,7 +59,7 @@ const PropertyCard = ({
         {/* Coordinates */}
         <div className="flex items-center space-x-2 text-sm">
           <MapPin className="w-4 h-4 text-gray-400" />
-          <span className="text-gray-300 font-mono">
+          <span className="text-gray-400 font-mono">
             {property.coordinates[1].toFixed(4)},{" "}
             {property.coordinates[0].toFixed(4)}
           </span>

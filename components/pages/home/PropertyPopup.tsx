@@ -27,9 +27,9 @@ const PropertyPopup = ({ property, onSelectProperty }: PopupProps) => {
         </Button>
       </div>
 
-      {property.image && (
+      {property.images && (
         <img
-          src={property.image}
+          src={property.images[0]}
           alt={property.name}
           className="w-full h-32 object-cover rounded-lg mb-3"
         />
@@ -67,7 +67,7 @@ const PropertyPopup = ({ property, onSelectProperty }: PopupProps) => {
           <Button
             size="sm"
             variant="outline"
-            className="flex-1 border-gray-600"
+            className="flex-1 border-gray-600 bg-gradient-web3 text-gray-100"
           >
             Not Listed
           </Button>

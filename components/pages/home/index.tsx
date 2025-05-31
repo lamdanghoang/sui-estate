@@ -22,8 +22,9 @@ const HomePage = () => {
       coordinates: [-73.9712, 40.7831],
       owner: "0xabcdef1234567890abcdef1234567890abcdef12",
       price: 150,
-      image:
+      images: [
         "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400",
+      ],
       description: "Stunning property overlooking Central Park",
       isListed: false,
     },
@@ -33,7 +34,9 @@ const HomePage = () => {
       coordinates: [-73.9969, 40.7061],
       owner: "0x1234567890abcdef1234567890abcdef12345678",
       price: 200,
-      image: "https://images.unsplash.com/photo-1551038247-3d9af20df552?w=400",
+      images: [
+        "https://images.unsplash.com/photo-1551038247-3d9af20df552?w=400",
+      ],
       description: "Modern loft with Brooklyn Bridge views",
       isListed: true,
     },
@@ -43,8 +46,9 @@ const HomePage = () => {
       coordinates: [-74.0123, 40.7074],
       owner: "0xfedcba0987654321fedcba0987654321fedcba09",
       price: 300,
-      image:
+      images: [
         "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=400",
+      ],
       description: "Prime commercial real estate in Financial District",
       isListed: true,
     },
@@ -72,7 +76,7 @@ const HomePage = () => {
     name: string;
     description: string;
     coordinates: [number, number];
-    image?: string;
+    images?: string[];
   }) => {
     if (!isWalletConnected || !walletAddress) {
       toast.error("Please connect your wallet first");
@@ -86,7 +90,7 @@ const HomePage = () => {
       coordinates: propertyData.coordinates,
       owner: walletAddress,
       price: Math.floor(Math.random() * 200) + 50, // Random price for demo
-      image: propertyData.image,
+      images: propertyData.images,
     };
 
     setProperties((prev) => [...prev, newProperty]);

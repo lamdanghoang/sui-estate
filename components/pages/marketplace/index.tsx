@@ -35,7 +35,9 @@ const MarketplacePage = () => {
       coordinates: [-73.9857, 40.7484],
       owner: "0xabcdef1234567890abcdef1234567890abcdef12",
       price: 450,
-      image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400",
+      images: [
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400",
+      ],
       description:
         "Prime Manhattan location with stunning city views and modern amenities.",
       isListed: true,
@@ -46,8 +48,9 @@ const MarketplacePage = () => {
       coordinates: [-73.9941, 40.6962],
       owner: "0x9876543210fedcba9876543210fedcba98765432",
       price: 320,
-      image:
+      images: [
         "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=400",
+      ],
       description:
         "Historic townhouse with original architecture and modern renovations.",
       isListed: true,
@@ -58,7 +61,9 @@ const MarketplacePage = () => {
       coordinates: [-74.0023, 40.7233],
       owner: "0xfedcba0987654321fedcba0987654321fedcba09",
       price: 280,
-      image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400",
+      images: [
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400",
+      ],
       description:
         "Spacious loft in trendy SoHo with high ceilings and artistic flair.",
       isListed: true,
@@ -69,8 +74,9 @@ const MarketplacePage = () => {
       coordinates: [-73.9712, 40.7831],
       owner: "0x1111222233334444555566667777888899990000",
       price: 750,
-      image:
+      images: [
         "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400",
+      ],
       description:
         "Ultra-luxury penthouse with direct Central Park views and private terrace.",
       isListed: true,

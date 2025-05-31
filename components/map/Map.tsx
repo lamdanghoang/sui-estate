@@ -66,7 +66,7 @@ const MapViewComponent = ({
 
     // Create the map
     const map = new Map({
-      basemap: "topo-vector",
+      basemap: "satellite",
     });
 
     // Create graphics layer
@@ -375,13 +375,13 @@ const MapViewComponent = ({
           </div>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-300">Latitude:</span>
+              <span className="text-gray-600">Latitude:</span>
               <span className="font-mono">
                 {selectedCoordinates[1].toFixed(6)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-300">Longitude:</span>
+              <span className="text-gray-600">Longitude:</span>
               <span className="font-mono">
                 {selectedCoordinates[0].toFixed(6)}
               </span>

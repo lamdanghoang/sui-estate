@@ -42,8 +42,9 @@ const ListPropertyModal = ({
       coordinates: [-74.006, 40.7128],
       owner: "0x1234567890abcdef1234567890abcdef12345678",
       price: 250,
-      image:
+      images: [
         "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400",
+      ],
       description:
         "Luxury penthouse in the heart of downtown with stunning city views.",
     },
@@ -53,7 +54,9 @@ const ListPropertyModal = ({
       coordinates: [-74.015, 40.708],
       owner: "0x1234567890abcdef1234567890abcdef12345678",
       price: 180,
-      image: "https://images.unsplash.com/photo-1551038247-3d9af20df552?w=400",
+      images: [
+        "https://images.unsplash.com/photo-1551038247-3d9af20df552?w=400",
+      ],
       description:
         "Beautiful waterfront property with private dock and panoramic views.",
     },
@@ -113,9 +116,9 @@ const ListPropertyModal = ({
           {selectedProperty && (
             <Card className="p-4 bg-gray-800/50 border-gray-600">
               <div className="flex space-x-3">
-                {selectedProperty.image && (
+                {selectedProperty.images && (
                   <img
-                    src={selectedProperty.image}
+                    src={selectedProperty.images[0]}
                     alt={selectedProperty.name}
                     className="w-16 h-16 object-cover rounded-lg"
                   />

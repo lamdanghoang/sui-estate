@@ -58,7 +58,7 @@ const SearchBar = ({ onLocationSearch, onCurrentLocation }: SearchBarProps) => {
           <Button
             type="submit"
             disabled={isSearching}
-            className="rounded-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 h-10"
+            className="rounded-full bg-web3-purple hover:opacity-90 text-white px-4 py-2 h-10"
           >
             {isSearching ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

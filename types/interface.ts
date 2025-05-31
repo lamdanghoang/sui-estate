@@ -1,11 +1,12 @@
 export interface Property {
   id: string;
+  objectId?: string;
   name: string;
-  description?: string;
+  description: string;
   coordinates: [number, number];
   owner: string;
-  area?: number;
+  area: number;
   price: number;
-  images?: string[];
+  images: string[];
   isListed?: boolean;
 }

@@ -5,16 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Home, TrendingUp, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 import PropertyCard from "@/components/pages/properties/PropertyCard";
-
-interface Property {
-  id: string;
-  name: string;
-  coordinates: [number, number];
-  owner: string;
-  price: number;
-  image?: string;
-  description?: string;
-}
+import { Property } from "@/types/interface";
 
 const PropertiesPage = () => {
   const [walletAddress] = useState(
@@ -29,8 +20,10 @@ const PropertiesPage = () => {
       coordinates: [-74.006, 40.7128],
       owner: walletAddress,
       price: 250,
-      image:
+      images: [
         "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400",
+      ],
+      area: 0,
       description:
         "Luxury penthouse in the heart of downtown with stunning city views.",
     },
@@ -40,7 +33,10 @@ const PropertiesPage = () => {
       coordinates: [-74.015, 40.708],
       owner: walletAddress,
       price: 180,
-      image: "https://images.unsplash.com/photo-1551038247-3d9af20df552?w=400",
+      images: [
+        "https://images.unsplash.com/photo-1551038247-3d9af20df552?w=400",
+      ],
+      area: 0,
       description:
         "Beautiful waterfront property with private dock and panoramic views.",
     },
@@ -50,8 +46,10 @@ const PropertiesPage = () => {
       coordinates: [-74.012, 40.71],
       owner: walletAddress,
       price: 320,
-      image:
+      images: [
         "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=400",
+      ],
+      area: 0,
       description:
         "State-of-the-art office building in prime business district.",
     },

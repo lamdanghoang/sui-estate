@@ -19,6 +19,8 @@ import {
 import { Card } from "@/components/ui/card";
 import { DollarSign, Tag } from "lucide-react";
 import { Property } from "@/types/interface";
+import { useCurrentAccount } from "@mysten/dapp-kit";
+import { CustomBtn } from "@/components/wallet/ConnectButton";
 
 interface ListPropertyModalProps {
   isOpen: boolean;
@@ -33,6 +35,7 @@ const ListPropertyModal = ({
 }: ListPropertyModalProps) => {
   const [selectedPropertyId, setSelectedPropertyId] = useState("");
   const [listingPrice, setListingPrice] = useState("");
+  const currentAccount = useCurrentAccount();
 
   // Mock user properties (in a real app, this would come from props or context)
   const userProperties: Property[] = [
@@ -45,6 +48,7 @@ const ListPropertyModal = ({
       images: [
         "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400",
       ],
+      area: 0,
       description:
         "Luxury penthouse in the heart of downtown with stunning city views.",
     },
@@ -57,6 +61,7 @@ const ListPropertyModal = ({
       images: [
         "https://images.unsplash.com/photo-1551038247-3d9af20df552?w=400",
       ],
+      area: 0,
       description:
         "Beautiful waterfront property with private dock and panoramic views.",
     },
@@ -192,13 +197,17 @@ const ListPropertyModal = ({
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleConfirm}
-              disabled={!selectedPropertyId || !listingPrice}
-              className="flex-1 bg-gradient-web3 hover:opacity-90 disabled:opacity-50"
-            >
-              List Property
-            </Button>
+            {currentAccount ? (
+              <Button
+                onClick={handleConfirm}
+                disabled={!selectedPropertyId || !listingPrice}
+                className="flex-1 bg-gradient-web3 hover:opacity-90 disabled:opacity-50"
+              >
+                List Property
+              </Button>
+            ) : (
+              <CustomBtn className="flex-1 w-full" />
+            )}
           </div>
         </div>
       </DialogContent>

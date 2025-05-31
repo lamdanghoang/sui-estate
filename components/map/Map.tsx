@@ -15,17 +15,7 @@ import { toast } from "sonner";
 import * as locator from "@arcgis/core/rest/locator";
 import SearchBar from "../pages/home/SearchBar";
 import PropertyPopup from "../pages/home/PropertyPopup";
-
-interface Property {
-  id: string;
-  name: string;
-  coordinates: [number, number];
-  owner: string;
-  price: number;
-  image?: string;
-  description?: string;
-  isListed?: boolean;
-}
+import { Property } from "@/types/interface";
 
 interface MapViewComponentProps {
   center?: {

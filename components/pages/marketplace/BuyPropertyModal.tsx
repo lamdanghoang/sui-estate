@@ -16,6 +16,8 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { Property } from "@/types/interface";
+import { useCurrentAccount } from "@mysten/dapp-kit";
+import { CustomBtn } from "@/components/wallet/ConnectButton";
 
 interface BuyPropertyModalProps {
   isOpen: boolean;
@@ -31,6 +33,7 @@ const BuyPropertyModal = ({
   onConfirm,
 }: BuyPropertyModalProps) => {
   const [isConfirming, setIsConfirming] = useState(false);
+  const currentAccount = useCurrentAccount();
 
   if (!property) return null;
 
@@ -50,8 +53,8 @@ const BuyPropertyModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="glassmorphism border-gray-700 text-white max-w-md">
-        <DialogHeader>
+      <DialogContent className="glassmorphism border-gray-700 text-white max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="pb-4">
           <DialogTitle className="flex items-center space-x-2">
             <ShoppingCart className="w-5 h-5 text-web3-purple" />
             <span>Purchase Property NFT</span>
@@ -152,15 +155,19 @@ const BuyPropertyModal = ({
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleConfirm}
-              disabled={isConfirming}
-              className="flex-1 bg-gradient-web3 hover:opacity-90 disabled:opacity-50"
-            >
-              {isConfirming
-                ? "Processing..."
-                : `Buy for ${totalCost.toFixed(2)} SUI`}
-            </Button>
+            {currentAccount ? (
+              <Button
+                onClick={handleConfirm}
+                disabled={isConfirming}
+                className="flex-1 bg-gradient-web3 hover:opacity-90 disabled:opacity-50"
+              >
+                {isConfirming
+                  ? "Processing..."
+                  : `Buy for ${totalCost.toFixed(2)} SUI`}
+              </Button>
+            ) : (
+              <CustomBtn className="flex-1 w-full" />
+            )}
           </div>
         </div>
       </DialogContent>

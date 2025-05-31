@@ -10,12 +10,11 @@ const MapViewComponent = dynamic(() => import("@/components/map/Map"), {
 });
 
 const HomePage = () => {
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState<string>();
   const [selectedCoordinates, setSelectedCoordinates] =
     useState<[number, number]>();
   const [isMintModalOpen, setIsMintModalOpen] = useState(false);
-  const [properties, setProperties] = useState<Property[]>([
+  // const [properties, setProperties] = useState<Property[]>([
+  const properties: Property[] = [
     {
       id: "1",
       name: "Central Park View",
@@ -26,6 +25,7 @@ const HomePage = () => {
         "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400",
       ],
       description: "Stunning property overlooking Central Park",
+      area: 0,
       isListed: false,
     },
     {
@@ -38,6 +38,7 @@ const HomePage = () => {
         "https://images.unsplash.com/photo-1551038247-3d9af20df552?w=400",
       ],
       description: "Modern loft with Brooklyn Bridge views",
+      area: 0,
       isListed: true,
     },
     {
@@ -50,17 +51,10 @@ const HomePage = () => {
         "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=400",
       ],
       description: "Prime commercial real estate in Financial District",
+      area: 0,
       isListed: true,
     },
-  ]);
-
-  const handleConnectWallet = () => {
-    // Simulate wallet connection
-    const mockAddress = "0x1234567890abcdef1234567890abcdef12345678";
-    setWalletAddress(mockAddress);
-    setIsWalletConnected(true);
-    toast.success("Wallet connected successfully!");
-  };
+  ];
 
   const handleCoordinateSelect = (coordinates: [number, number]) => {
     setSelectedCoordinates(coordinates);
@@ -70,31 +64,6 @@ const HomePage = () => {
   const handlePropertySelect = (property: Property) => {
     console.log("Selected property:", property);
     toast.info(`Selected ${property.name}`);
-  };
-
-  const handleMintProperty = (propertyData: {
-    name: string;
-    description: string;
-    coordinates: [number, number];
-    images?: string[];
-  }) => {
-    if (!isWalletConnected || !walletAddress) {
-      toast.error("Please connect your wallet first");
-      return;
-    }
-
-    const newProperty: Property = {
-      id: Date.now().toString(),
-      name: propertyData.name,
-      description: propertyData.description,
-      coordinates: propertyData.coordinates,
-      owner: walletAddress,
-      price: Math.floor(Math.random() * 200) + 50, // Random price for demo
-      images: propertyData.images,
-    };
-
-    setProperties((prev) => [...prev, newProperty]);
-    toast.success(`Successfully minted ${propertyData.name} NFT!`);
   };
 
   return (
@@ -107,14 +76,10 @@ const HomePage = () => {
           selectedCoordinates={selectedCoordinates}
         />
       </div>
-      <button className="hidden" onClick={handleConnectWallet}>
-        Click
-      </button>
       <MintModal
         isOpen={isMintModalOpen}
         onClose={() => setIsMintModalOpen(false)}
         coordinates={selectedCoordinates}
-        onMint={handleMintProperty}
       />
     </div>
   );

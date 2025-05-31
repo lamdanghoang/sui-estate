@@ -6,7 +6,7 @@ import { DollarSign, User } from "lucide-react";
 import { Property } from "@/types/interface";
 
 interface PopupProps {
-  property: Property | null;
+  property: Property;
   onSelectProperty: (value: Property | null) => void;
 }
 

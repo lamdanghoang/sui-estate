@@ -14,6 +14,8 @@ import { Card } from "@/components/ui/card";
 import { MapPin, Upload, Coins, X, Home, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { storeImageFile } from "@/helpers/api";
+import { useCurrentAccount } from "@mysten/dapp-kit";
+import { CustomBtn } from "./wallet/ConnectButton";
 
 interface PropertyData {
   name: string;
@@ -28,7 +30,6 @@ interface MintModalProps {
   isOpen: boolean;
   onClose: () => void;
   coordinates?: [number, number];
-  onMint: (propertyData: PropertyData) => void;
   initialData?: Partial<PropertyData>;
 }
 
@@ -53,7 +54,6 @@ const MintModal = ({
   isOpen,
   onClose,
   coordinates,
-  onMint,
   initialData,
 }: MintModalProps) => {
   const [formData, setFormData] = useState<FormData>({
@@ -69,6 +69,7 @@ const MintModal = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [touched, setTouched] = useState<Set<string>>(new Set());
+  const currentAccount = useCurrentAccount();
 
   // Initialize form with provided data
   useEffect(() => {
@@ -220,7 +221,7 @@ const MintModal = ({
 
       console.log(propertyData);
 
-      onMint(propertyData);
+      // onMint(propertyData);
       toast.success("Property NFT minted successfully!");
       onClose();
     } catch (error) {
@@ -493,31 +494,35 @@ const MintModal = ({
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              className="flex-1 bg-gradient-web3 hover:opacity-90"
-              disabled={
-                isLoading ||
-                !coordinates ||
-                Object.keys(errors).some(
-                  (key) => errors[key as keyof FormErrors]
-                )
-              }
-            >
-              {isLoading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>
-                    {isUploading ? "Uploading images..." : "Minting..."}
-                  </span>
-                </div>
-              ) : (
-                <>
-                  <Coins className="w-4 h-4 mr-2" />
-                  Confirm Mint
-                </>
-              )}
-            </Button>
+            {currentAccount ? (
+              <Button
+                type="submit"
+                className="flex-1 bg-gradient-web3 hover:opacity-90"
+                disabled={
+                  isLoading ||
+                  !coordinates ||
+                  Object.keys(errors).some(
+                    (key) => errors[key as keyof FormErrors]
+                  )
+                }
+              >
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>
+                      {isUploading ? "Uploading images..." : "Minting..."}
+                    </span>
+                  </div>
+                ) : (
+                  <>
+                    <Coins className="w-4 h-4 mr-2" />
+                    Confirm Mint
+                  </>
+                )}
+              </Button>
+            ) : (
+              <CustomBtn className="flex-1 w-full" />
+            )}
           </div>
         </form>
       </DialogContent>

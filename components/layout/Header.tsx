@@ -1,4 +1,4 @@
-import { Map, Home, Plus } from "lucide-react";
+import { Map, Home, Store } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { CustomBtn } from "../wallet/ConnectButton";
 
@@ -8,7 +8,7 @@ const Header = () => {
 
   const navigationItems = [
     { label: "Explore", path: "/", icon: Map },
-    { label: "Marketplace", path: "/marketplace", icon: Plus },
+    { label: "Marketplace", path: "/marketplace", icon: Store },
     { label: "My Properties", path: "/properties", icon: Home },
   ];
 

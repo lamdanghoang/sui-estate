@@ -38,6 +38,7 @@ const MarketplacePage = () => {
       images: [
         "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400",
       ],
+      area: 0,
       description:
         "Prime Manhattan location with stunning city views and modern amenities.",
       isListed: true,
@@ -51,6 +52,7 @@ const MarketplacePage = () => {
       images: [
         "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=400",
       ],
+      area: 0,
       description:
         "Historic townhouse with original architecture and modern renovations.",
       isListed: true,
@@ -64,6 +66,7 @@ const MarketplacePage = () => {
       images: [
         "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400",
       ],
+      area: 0,
       description:
         "Spacious loft in trendy SoHo with high ceilings and artistic flair.",
       isListed: true,
@@ -77,6 +80,7 @@ const MarketplacePage = () => {
       images: [
         "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400",
       ],
+      area: 0,
       description:
         "Ultra-luxury penthouse with direct Central Park views and private terrace.",
       isListed: true,

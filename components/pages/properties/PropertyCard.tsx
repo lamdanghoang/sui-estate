@@ -33,7 +33,7 @@ const PropertyCard = ({
   };
 
   return (
-    <Card className="overflow-hidden glassmorphism border-gray-700 hover:border-web3-purple transition-all duration-300 hover:shadow-lg hover:shadow-web3-purple/20 animate-fade-in">
+    <Card className="flex flex-col h-full py-0 gap-0 overflow-hidden glassmorphism border-gray-700 hover:border-web3-purple transition-all duration-300 hover:shadow-lg hover:shadow-web3-purple/20 animate-fade-in">
       {/* Property Image */}
       <div className="aspect-video relative overflow-hidden">
         {property.image ? (
@@ -44,22 +44,20 @@ const PropertyCard = ({
           />
         ) : (
           <div className="w-full h-full bg-gradient-web3 flex items-center justify-center">
-            <MapPin className="w-12 h-12 text-white opacity-60" />
+            <MapPin className="w-12 h-12  opacity-60" />
           </div>
         )}
         {isOwned && (
-          <Badge className="absolute top-3 right-3 bg-green-500/90 text-white">
+          <Badge className="absolute top-3 right-3 bg-green-500/90 ">
             Owned
           </Badge>
         )}
       </div>
 
       {/* Property Details */}
-      <div className="p-4 space-y-3">
+      <div className="p-4 flex flex-col gap-3 flex-1">
         <div>
-          <h3 className="font-semibold text-white text-lg mb-1">
-            {property.name}
-          </h3>
+          <h3 className="font-semibold  text-lg mb-1">{property.name}</h3>
           {property.description && (
             <p className="text-gray-400 text-sm line-clamp-2">
               {property.description}
@@ -80,9 +78,7 @@ const PropertyCard = ({
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-400">Owner:</span>
-            <span className="text-white font-mono">
-              {formatAddress(property.owner)}
-            </span>
+            <span className=" font-mono">{formatAddress(property.owner)}</span>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-1">
@@ -95,12 +91,12 @@ const PropertyCard = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex space-x-2 pt-2">
+        <div className="flex space-x-2 pt-2 mt-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={() => onViewOnMap(property)}
-            className="flex-1 border-gray-600 text-gray-300 hover:text-white hover:border-web3-purple"
+            className="flex-1 border-gray-600 text-gray-100 bg-web3-blue hover:border-web3-purple"
           >
             <Eye className="w-4 h-4 mr-1" />
             View on Map
@@ -111,7 +107,7 @@ const PropertyCard = ({
                 <Button
                   size="sm"
                   onClick={() => onSell(property)}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                  className="flex-1 bg-red-600 hover:bg-red-700 "
                 >
                   Sell
                 </Button>

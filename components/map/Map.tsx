@@ -171,21 +171,21 @@ const MapViewComponent = ({
 
       {/* Selected Coordinates Display */}
       {selectedCoordinates && (
-        <Card className="absolute bottom-6 left-6 p-4 glassmorphism max-w-sm animate-fade-in">
+        <Card className="absolute bottom-6 left-6 p-4 glassmorphism max-w-sm animate-fade-in gap-0">
           <div className="flex items-center space-x-3 mb-3">
             <MapPin className="w-5 h-5 text-web3-purple" />
-            <h3 className="font-semibold text-white">Selected Location</h3>
+            <h3 className="font-semibold ">Selected Location</h3>
           </div>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-300">Latitude:</span>
-              <span className="text-white font-mono">
+              <span className="font-mono">
                 {selectedCoordinates[1].toFixed(6)}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-300">Longitude:</span>
-              <span className="text-white font-mono">
+              <span className="font-mono">
                 {selectedCoordinates[0].toFixed(6)}
               </span>
             </div>
@@ -194,7 +194,7 @@ const MapViewComponent = ({
             onClick={() => {
               /* This will be handled by the parent component */
             }}
-            className="w-full mt-4 bg-gradient-web3 hover:opacity-90"
+            className="w-full mt-4 bg-web3-purple hover:opacity-90"
           >
             <Plus className="w-4 h-4 mr-2" />
             Mint Property NFT

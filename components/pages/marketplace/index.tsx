@@ -76,15 +76,6 @@ const MarketplacePage = () => {
     setIsBuyModalOpen(false);
   };
 
-  // const handleConfirmListing = (listingData: {
-  //   propertyId: string;
-  //   price: number;
-  // }) => {
-  //   console.log(listingData);
-  //   toast.success("Property listed successfully!");
-  //   setIsListModalOpen(false);
-  // };
-
   const filteredProperties = listedProperties
     .filter(
       (property) =>
@@ -258,7 +249,6 @@ const MarketplacePage = () => {
       <ListPropertyModal
         isOpen={isListModalOpen}
         onClose={() => setIsListModalOpen(false)}
-        // onConfirm={handleConfirmListing}
       />
 
       <BuyPropertyModal

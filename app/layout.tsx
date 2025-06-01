@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Real Estate",
-  description: "A real estate platform",
+  title: "SuiEstate",
+  description: "A onchain real estate platform",
 };
 
 export default function RootLayout({

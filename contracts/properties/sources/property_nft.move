@@ -14,6 +14,7 @@ use sui::coin::{Coin};
 
 // Constants
 const HOST: vector<u8> = b"https://aggregator.testnet.walrus.atalma.io/v1/blobs/";
+const FEE_RATE: u64 = 250;
 
 // Structs
 public struct PropertyInfo has key, store {
@@ -141,7 +142,14 @@ public fun buy_nft(
 
     let seller = nft.owner;
     let price = nft.listing_price;
-    let payment_coin: Coin<SUI> = payment.split(price, ctx);
+
+    let platform_fee = (price * FEE_RATE) / 10000;
+
+    let mut payment_coin: Coin<SUI> = payment.split(price, ctx);
+
+    // Transfer platform fee
+    let fee_coin = payment_coin.split(platform_fee, ctx);
+    transfer::public_transfer(fee_coin, @alice);
 
     transfer::public_transfer(payment_coin, seller);
 

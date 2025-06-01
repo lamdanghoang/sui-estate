@@ -15,8 +15,6 @@ import { Store, Search, TrendingUp, DollarSign, Filter } from "lucide-react";
 import { toast } from "sonner";
 import PropertyCard from "@/components/pages/properties/PropertyCard";
 import ListPropertyModal from "@/components/pages/marketplace/ListPropertyModal";
-// import BuyPropertyModal from "@/components/pages/marketplace/BuyPropertyModal";
-// import { Property } from "@/types/interface";
 import { getPropertyNFTs } from "@/helpers/api";
 import { NFTFieldProps, useGetNft } from "@/hooks/usePropertiesContract";
 import { useCurrentAccount } from "@mysten/dapp-kit";
@@ -25,10 +23,6 @@ const MarketplacePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("price-low");
   const [isListModalOpen, setIsListModalOpen] = useState(false);
-  // const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
-  // const [selectedProperty, setSelectedProperty] = useState<Property | null>(
-  //   null
-  // );
   const [listedProperties, setListedProperties] = useState<NFTFieldProps[]>([]);
   const { get_nft_fields } = useGetNft();
   const currentAccount = useCurrentAccount();
@@ -60,11 +54,6 @@ const MarketplacePage = () => {
   const handleListProperty = () => {
     setIsListModalOpen(true);
   };
-
-  // const handleConfirmPurchase = (property: Property) => {
-  //   toast.success(`Successfully purchased ${property.name}!`);
-  //   setIsBuyModalOpen(false);
-  // };
 
   const filteredProperties = listedProperties
     .filter(
@@ -217,7 +206,6 @@ const MarketplacePage = () => {
                     isOwned={property.owner === currentAccount?.address}
                     isListed={property.is_listed}
                     onViewOnMap={handleViewOnMap}
-                    // onBuy={handleBuyProperty}
                   />
                 ))}
               </div>
@@ -241,13 +229,6 @@ const MarketplacePage = () => {
         isOpen={isListModalOpen}
         onClose={() => setIsListModalOpen(false)}
       />
-
-      {/* <BuyPropertyModal
-        isOpen={isBuyModalOpen}
-        onClose={() => setIsBuyModalOpen(false)}
-        property={selectedProperty}
-        onConfirm={handleConfirmPurchase}
-      /> */}
     </div>
   );
 };

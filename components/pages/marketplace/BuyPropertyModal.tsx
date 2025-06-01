@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,41 +15,58 @@ import {
   ShoppingCart,
   AlertTriangle,
 } from "lucide-react";
-import { Property } from "@/types/interface";
 import { useCurrentAccount } from "@mysten/dapp-kit";
 import { CustomBtn } from "@/components/wallet/ConnectButton";
+import { NFTFieldProps, usePurchaseNFT } from "@/hooks/usePropertiesContract";
+import { toast } from "sonner";
+import { formatDigest } from "@mysten/sui/utils";
 
 interface BuyPropertyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  property: Property | null;
-  onConfirm: (property: Property) => void;
+  property: NFTFieldProps | null;
 }
 
 const BuyPropertyModal = ({
   isOpen,
   onClose,
   property,
-  onConfirm,
 }: BuyPropertyModalProps) => {
-  const [isConfirming, setIsConfirming] = useState(false);
   const currentAccount = useCurrentAccount();
+  const { sign_to_purchase, digest, isLoading, error } = usePurchaseNFT();
 
-  if (!property) return null;
+  // Effect to observe the digest value from the hook and update UI accordingly
+  useEffect(() => {
+    if (digest) {
+      toast("Property NFT purchased successfully!", {
+        description: `Txn: ${formatDigest(digest)}`,
+        action: {
+          label: "View",
+          onClick: () =>
+            window.open(`https://suiscan.xyz/testnet/tx/${digest}`, "_blank"),
+        },
+        style: {
+          backgroundColor: "#0986f5",
+        },
+      });
 
-  const handleConfirm = async () => {
-    setIsConfirming(true);
-
-    // Simulate transaction processing
-    setTimeout(() => {
-      onConfirm(property);
-      setIsConfirming(false);
       onClose();
-    }, 2000);
-  };
+    }
+  }, [digest]);
 
-  const platformFee = property.price * 0.025;
-  const totalCost = property.price + platformFee;
+  // Effect to observe errors from the hook
+  useEffect(() => {
+    if (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to purchase NFT"
+      );
+    }
+  }, [error]);
+
+  if (!property) return;
+
+  const platformFee = property.listing_price * 0.025;
+  const totalCost = property.listing_price + platformFee;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -65,9 +82,9 @@ const BuyPropertyModal = ({
           {/* Property Details */}
           <Card className="p-4 bg-gray-800/50 border-gray-600">
             <div className="space-y-3">
-              {property.images && (
+              {property.image_url && (
                 <img
-                  src={property.images[0]}
+                  src={property.image_url}
                   alt={property.name}
                   className="w-full h-32 object-cover rounded-lg"
                 />
@@ -77,9 +94,9 @@ const BuyPropertyModal = ({
                 <h3 className="font-semibold text-white text-lg">
                   {property.name}
                 </h3>
-                {property.description && (
+                {property.property_info.description && (
                   <p className="text-gray-400 text-sm mt-1">
-                    {property.description}
+                    {property.property_info.description}
                   </p>
                 )}
               </div>
@@ -88,8 +105,8 @@ const BuyPropertyModal = ({
                 <div className="flex items-center space-x-2">
                   <MapPin className="w-4 h-4 text-gray-400" />
                   <span className="text-gray-300 font-mono">
-                    {property.coordinates[1].toFixed(4)},{" "}
-                    {property.coordinates[0].toFixed(4)}
+                    {property.property_info.coordinates[1].toFixed(4)},{" "}
+                    {property.property_info.coordinates[0].toFixed(4)}
                   </span>
                 </div>
 
@@ -113,7 +130,7 @@ const BuyPropertyModal = ({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-400">Property Price:</span>
-                <span className="text-white">{property.price} SUI</span>
+                <span className="text-white">{property.listing_price} SUI</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Platform Fee (2.5%):</span>
@@ -150,18 +167,20 @@ const BuyPropertyModal = ({
             <Button
               variant="outline"
               onClick={onClose}
-              disabled={isConfirming}
+              disabled={isLoading}
               className="flex-1 border-gray-600 text-gray-300 hover:text-white"
             >
               Cancel
             </Button>
             {currentAccount ? (
               <Button
-                onClick={handleConfirm}
-                disabled={isConfirming}
+                onClick={() =>
+                  sign_to_purchase(property.id, property.listing_price)
+                }
+                disabled={isLoading}
                 className="flex-1 bg-gradient-web3 hover:opacity-90 disabled:opacity-50"
               >
-                {isConfirming
+                {isLoading
                   ? "Processing..."
                   : `Buy for ${totalCost.toFixed(2)} SUI`}
               </Button>

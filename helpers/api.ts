@@ -34,7 +34,7 @@ export const storeImageFile = async (file: File): Promise<string> => {
 };
 
 export const getPropertyNFTs = async () => {
-  const url = `http://localhost:3000/nfts?is_listed=true`;
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/nfts?is_listed=true`;
   try {
     const response = await fetch(url);
 

@@ -112,8 +112,24 @@ const MapViewComponent = ({
     });
 
     // Add click handler for coordinate selection
-    mapView.on("click", (event) => {
-      // Add null checks for longitude and latitude
+    mapView.on("click", async (event) => {
+      // Check if click is on a marker first
+      const hitResponse = await mapView.hitTest(event);
+      const result = hitResponse.results[0];
+
+      if (
+        result &&
+        result.type === "graphic" &&
+        result.graphic.attributes?.property
+      ) {
+        // Click is on a marker, handle property selection
+        const property = result.graphic.attributes.property;
+        setSelectedProperty(property);
+        onPropertySelect(property);
+        return; // Don't proceed with coordinate selection
+      }
+
+      // If not clicking on a marker, handle coordinate selection
       const longitude = event.mapPoint.longitude;
       const latitude = event.mapPoint.latitude;
 
@@ -128,24 +144,6 @@ const MapViewComponent = ({
       } else {
         toast.error("Could not determine coordinates from click location");
       }
-    });
-
-    // Add click handler for markers
-    mapView.on("click", (event) => {
-      mapView!.hitTest(event).then((response) => {
-        if (response.results.length > 0) {
-          const result = response.results[0];
-          if (
-            result.type === "graphic" &&
-            result.graphic.attributes &&
-            result.graphic.attributes.property
-          ) {
-            const property = result.graphic.attributes.property;
-            setSelectedProperty(property);
-            onPropertySelect(property);
-          }
-        }
-      });
     });
 
     console.log(view);
@@ -408,12 +406,12 @@ const MapViewComponent = ({
               src={hoverPopup.property.image_url}
               alt={hoverPopup.property.name}
             />
-            <div className="flex items-center justify-between text-sm">
+            {/* <div className="flex items-center justify-between text-sm">
               <span className="text-gray-400">Price:</span>
               <span className="text-green-400 font-semibold">
                 {hoverPopup.property.listing_price} SUI
               </span>
-            </div>
+            </div> */}
           </div>
         </Card>
       )}

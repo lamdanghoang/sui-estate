@@ -13,7 +13,7 @@ use sui::sui::SUI;
 use sui::coin::{Coin};
 
 // Constants
-const HOST: vector<u8> = b"https://aggregator.testnet.walrus.atalma.io/";
+const HOST: vector<u8> = b"https://aggregator.testnet.walrus.atalma.io/v1/blobs/";
 
 // Structs
 public struct PropertyInfo has key, store {
@@ -22,7 +22,6 @@ public struct PropertyInfo has key, store {
     coordinates: vector<u64>, // [lat, lng]
     images: vector<String>,
     area: u64,
-    price: u64,
     created_at: u64,
     updated_at: u64
 }
@@ -53,7 +52,6 @@ public fun mint_nft(
     coordinates: vector<u64>,
     images: vector<String>,
     area: u64,
-    price: u64,
     clock: &Clock,
     ctx: &mut TxContext
 ): PropertyNFT {
@@ -65,7 +63,6 @@ public fun mint_nft(
         coordinates,
         images,
         area,
-        price,
         created_at: timestamp_ms(clock),
         updated_at: timestamp_ms(clock),
     };

@@ -1,16 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Home, TrendingUp, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 import PropertyCard from "@/components/pages/properties/PropertyCard";
 import { Property } from "@/types/interface";
+import { useCurrentAccount } from "@mysten/dapp-kit";
+import { NFTFieldProps, useGetNft } from "@/hooks/usePropertiesContract";
 
 const PropertiesPage = () => {
   const [walletAddress] = useState(
     "0x1234567890abcdef1234567890abcdef12345678"
   );
+  const currentAccount = useCurrentAccount();
+  const { get_all_nfts } = useGetNft();
+  const [nfts, setNfts] = useState<NFTFieldProps[]>([]);
 
   // Mock user properties
   const [userProperties] = useState<Property[]>([
@@ -55,18 +60,29 @@ const PropertiesPage = () => {
     },
   ]);
 
-  const handleViewOnMap = (property: Property) => {
+  useEffect(() => {
+    if (!currentAccount) return;
+
+    const fetchOwnedNFT = async () => {
+      const userNfts = await get_all_nfts(currentAccount.address);
+      setNfts(userNfts);
+    };
+
+    fetchOwnedNFT();
+  }, [currentAccount?.address]);
+
+  const handleViewOnMap = (property: NFTFieldProps) => {
     toast.info(`Viewing ${property.name} on map`);
     // In a real app, this would navigate to the map view with the property highlighted
   };
 
-  const handleSellProperty = (property: Property) => {
+  const handleSellProperty = (property: NFTFieldProps) => {
     toast.info(`Initiating sale for ${property.name}`);
     // In a real app, this would open a sell modal or navigate to sell page
   };
 
-  const totalValue = userProperties.reduce(
-    (sum, property) => sum + property.price,
+  const totalValue = nfts.reduce(
+    (sum, property) => sum + property.listing_price,
     0
   );
 
@@ -95,7 +111,7 @@ const PropertiesPage = () => {
                 <div>
                   <p className="text-gray-400 text-sm">Total Properties</p>
                   <p className="text-2xl font-bold text-gray-700">
-                    {userProperties.length}
+                    {nfts.length}
                   </p>
                 </div>
               </div>
@@ -124,7 +140,7 @@ const PropertiesPage = () => {
                   <p className="text-gray-400 text-sm">Avg. Property Value</p>
                   <p className="text-2xl font-bold text-gray-700">
                     {userProperties.length > 0
-                      ? Math.round(totalValue / userProperties.length)
+                      ? Math.round(totalValue / nfts.length)
                       : 0}{" "}
                     SUI
                   </p>
@@ -134,7 +150,7 @@ const PropertiesPage = () => {
           </div>
 
           {/* Properties Grid */}
-          {userProperties.length > 0 ? (
+          {nfts.length > 0 ? (
             <div>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-white">
@@ -144,12 +160,12 @@ const PropertiesPage = () => {
                   variant="outline"
                   className="text-green-400 border-green-400"
                 >
-                  {userProperties.length} Properties
+                  {nfts.length} Properties
                 </Badge>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {userProperties.map((property) => (
+                {nfts.map((property) => (
                   <PropertyCard
                     key={property.id}
                     property={property}

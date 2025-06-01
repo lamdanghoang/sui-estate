@@ -7,7 +7,7 @@ export const CONSTANTS = {
   propertyContract: {
     packageId:
       process.env.CONTRACT_ID ||
-      "0x5644d957820c1f90b7c5951adc011d3c51e9c6217b5eaa719e0e233161814f09",
+      "0x7f10901f1d00d8a3d27de000a97751671f139d8763f6cd6f0a6cd61884564a23",
     propertyInfoType: `${process.env.CONTRACT_ID}::property_nft::PropertyInfo`,
     propertyNFTType: `${process.env.CONTRACT_ID}::property_nft::PropertyNFT`,
   },

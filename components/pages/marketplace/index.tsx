@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,8 @@ import PropertyCard from "@/components/pages/properties/PropertyCard";
 import ListPropertyModal from "@/components/pages/marketplace/ListPropertyModal";
 import BuyPropertyModal from "@/components/pages/marketplace/BuyPropertyModal";
 import { Property } from "@/types/interface";
+import { getPropertyNFTs } from "@/helpers/api";
+import { NFTFieldProps, useGetNft } from "@/hooks/usePropertiesContract";
 
 const MarketplacePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,73 +28,42 @@ const MarketplacePage = () => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(
     null
   );
+  const [listedProperties, setListedProperties] = useState<NFTFieldProps[]>([]);
+  const { get_nft_fields } = useGetNft();
 
-  // Mock listed properties for sale
-  const [listedProperties] = useState<Property[]>([
-    {
-      id: "4",
-      name: "Luxury Manhattan Condo",
-      coordinates: [-73.9857, 40.7484],
-      owner: "0xabcdef1234567890abcdef1234567890abcdef12",
-      price: 450,
-      images: [
-        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400",
-      ],
-      area: 0,
-      description:
-        "Prime Manhattan location with stunning city views and modern amenities.",
-      isListed: true,
-    },
-    {
-      id: "5",
-      name: "Brooklyn Heights Townhouse",
-      coordinates: [-73.9941, 40.6962],
-      owner: "0x9876543210fedcba9876543210fedcba98765432",
-      price: 320,
-      images: [
-        "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=400",
-      ],
-      area: 0,
-      description:
-        "Historic townhouse with original architecture and modern renovations.",
-      isListed: true,
-    },
-    {
-      id: "6",
-      name: "SoHo Loft Space",
-      coordinates: [-74.0023, 40.7233],
-      owner: "0xfedcba0987654321fedcba0987654321fedcba09",
-      price: 280,
-      images: [
-        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400",
-      ],
-      area: 0,
-      description:
-        "Spacious loft in trendy SoHo with high ceilings and artistic flair.",
-      isListed: true,
-    },
-    {
-      id: "7",
-      name: "Central Park Penthouse",
-      coordinates: [-73.9712, 40.7831],
-      owner: "0x1111222233334444555566667777888899990000",
-      price: 750,
-      images: [
-        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400",
-      ],
-      area: 0,
-      description:
-        "Ultra-luxury penthouse with direct Central Park views and private terrace.",
-      isListed: true,
-    },
-  ]);
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const properties = await getPropertyNFTs();
+        const listedNFTs = await Promise.all(
+          properties.data.map(async (nft: { object_id: string }) => {
+            const nftFields = await get_nft_fields(nft.object_id);
+            return nftFields;
+          })
+        );
+        setListedProperties(
+          listedNFTs.filter((nft): nft is NFTFieldProps => nft !== null)
+        );
+      } catch (error) {
+        console.error("Error fetching property nfts:", error);
+      }
+    };
+    fetchProperties();
+  }, []);
 
-  const handleViewOnMap = (property: Property) => {
+  const handleViewOnMap = (property: NFTFieldProps) => {
     toast.info(`Viewing ${property.name} on map`);
   };
 
-  const handleBuyProperty = (property: Property) => {
-    setSelectedProperty(property);
+  const handleBuyProperty = (property: NFTFieldProps) => {
+    setSelectedProperty({
+      ...property,
+      description: property.property_info.description,
+      coordinates: property.property_info.coordinates,
+      area: property.property_info.area,
+      price: property.listing_price,
+      images: property.property_info.images,
+    });
     setIsBuyModalOpen(true);
   };
 
@@ -105,27 +76,29 @@ const MarketplacePage = () => {
     setIsBuyModalOpen(false);
   };
 
-  const handleConfirmListing = (listingData: {
-    propertyId: string;
-    price: number;
-  }) => {
-    console.log(listingData);
-    toast.success("Property listed successfully!");
-    setIsListModalOpen(false);
-  };
+  // const handleConfirmListing = (listingData: {
+  //   propertyId: string;
+  //   price: number;
+  // }) => {
+  //   console.log(listingData);
+  //   toast.success("Property listed successfully!");
+  //   setIsListModalOpen(false);
+  // };
 
   const filteredProperties = listedProperties
     .filter(
       (property) =>
         property.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        property.description?.toLowerCase().includes(searchTerm.toLowerCase())
+        property.property_info.description
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
       switch (sortBy) {
         case "price-low":
-          return a.price - b.price;
+          return a.listing_price - b.listing_price;
         case "price-high":
-          return b.price - a.price;
+          return b.listing_price - a.listing_price;
         case "name":
           return a.name.localeCompare(b.name);
         default:
@@ -134,7 +107,7 @@ const MarketplacePage = () => {
     });
 
   const totalVolume = listedProperties.reduce(
-    (sum, property) => sum + property.price,
+    (sum, property) => sum + property.listing_price,
     0
   );
   const averagePrice = Math.round(totalVolume / listedProperties.length);
@@ -285,7 +258,7 @@ const MarketplacePage = () => {
       <ListPropertyModal
         isOpen={isListModalOpen}
         onClose={() => setIsListModalOpen(false)}
-        onConfirm={handleConfirmListing}
+        // onConfirm={handleConfirmListing}
       />
 
       <BuyPropertyModal

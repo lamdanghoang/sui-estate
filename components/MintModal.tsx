@@ -16,14 +16,15 @@ import { toast } from "sonner";
 import { storeImageFile } from "@/helpers/api";
 import { useCurrentAccount } from "@mysten/dapp-kit";
 import { CustomBtn } from "./wallet/ConnectButton";
+import { useMintNFT } from "@/hooks/usePropertiesContract";
+import { formatDigest } from "@mysten/sui/utils";
 
 interface PropertyData {
   name: string;
   description: string;
   coordinates: [number, number];
-  area?: number;
-  images?: string[];
-  price?: number;
+  area: number;
+  images: string[];
 }
 
 interface MintModalProps {
@@ -37,7 +38,6 @@ interface FormData {
   name: string;
   description: string;
   area: string;
-  price: string;
   images: string[];
   uploadedBlobIds: string[];
 }
@@ -46,7 +46,6 @@ interface FormErrors {
   name?: string;
   description?: string;
   area?: string;
-  price?: string;
   general?: string;
 }
 
@@ -60,16 +59,21 @@ const MintModal = ({
     name: "",
     description: "",
     area: "",
-    price: "",
     images: [],
     uploadedBlobIds: [],
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [touched, setTouched] = useState<Set<string>>(new Set());
   const currentAccount = useCurrentAccount();
+  const {
+    sign_to_mint,
+    digest,
+    createdObjectId: objectId,
+    error,
+    isLoading,
+  } = useMintNFT();
 
   // Initialize form with provided data
   useEffect(() => {
@@ -78,7 +82,6 @@ const MintModal = ({
         name: initialData.name || "",
         description: initialData.description || "",
         area: initialData.area?.toString() || "",
-        price: initialData.price?.toString() || "",
         images: initialData.images || [],
         uploadedBlobIds: [],
       });
@@ -92,7 +95,6 @@ const MintModal = ({
         name: "",
         description: "",
         area: "",
-        price: "",
         images: [],
         uploadedBlobIds: [],
       });
@@ -180,6 +182,37 @@ const MintModal = ({
     return blobIds;
   };
 
+  // Effect to observe the digest value from the hook and update UI accordingly
+  useEffect(() => {
+    if (digest && objectId) {
+      toast("Property NFT minted successfully!", {
+        description: `Txn: ${formatDigest(digest)}`,
+        action: {
+          label: "View",
+          onClick: () =>
+            window.open(`https://suiscan.xyz/testnet/tx/${digest}`, "_blank"),
+        },
+        style: {
+          backgroundColor: "#0986f5",
+        },
+      });
+      onClose();
+    }
+  }, [digest, objectId]);
+
+  // Effect to observe errors from the hook
+  useEffect(() => {
+    if (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to mint property NFT"
+      );
+      setErrors((prev) => ({
+        ...prev,
+        general: "Minting failed. Please try again.",
+      }));
+    }
+  }, [error]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -191,7 +224,6 @@ const MintModal = ({
       return;
     }
 
-    setIsLoading(true);
     setIsUploading(true);
 
     try {
@@ -214,26 +246,28 @@ const MintModal = ({
         name: formData.name.trim(),
         description: formData.description.trim(),
         coordinates: coordinates!,
-        ...(formData.area && { area: parseFloat(formData.area) }),
-        ...(formData.price && { price: parseFloat(formData.price) }),
-        ...(uploadedBlobIds.length > 0 && { images: uploadedBlobIds }),
+        area: formData.area ? parseFloat(formData.area) : 10,
+        images: uploadedBlobIds,
       };
 
       console.log(propertyData);
-
-      // onMint(propertyData);
-      toast.success("Property NFT minted successfully!");
-      onClose();
+      await sign_to_mint({
+        name: propertyData.name,
+        description: propertyData.description,
+        coordinates: propertyData.coordinates,
+        images: propertyData.images,
+        area: propertyData.area,
+      });
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to mint property NFT"
-      );
+      console.error("Minting error:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred";
+      toast.error(errorMessage);
       setErrors((prev) => ({
         ...prev,
-        general: "Minting failed. Please try again.",
+        general: errorMessage,
       }));
     } finally {
-      setIsLoading(false);
       setIsUploading(false);
     }
   };

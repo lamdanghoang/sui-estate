@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,71 +18,81 @@ import {
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { DollarSign, Tag } from "lucide-react";
-import { Property } from "@/types/interface";
 import { useCurrentAccount } from "@mysten/dapp-kit";
 import { CustomBtn } from "@/components/wallet/ConnectButton";
+import {
+  NFTFieldProps,
+  useGetNft,
+  useListNFT,
+} from "@/hooks/usePropertiesContract";
+import { toast } from "sonner";
+import { formatDigest } from "@mysten/sui/utils";
 
 interface ListPropertyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (listingData: { propertyId: string; price: number }) => void;
 }
 
-const ListPropertyModal = ({
-  isOpen,
-  onClose,
-  onConfirm,
-}: ListPropertyModalProps) => {
+const ListPropertyModal = ({ isOpen, onClose }: ListPropertyModalProps) => {
   const [selectedPropertyId, setSelectedPropertyId] = useState("");
   const [listingPrice, setListingPrice] = useState("");
+  const [nfts, setNfts] = useState<NFTFieldProps[]>([]);
   const currentAccount = useCurrentAccount();
+  const { sign_to_list, digest, error, isLoading } = useListNFT();
+  const { get_all_nfts } = useGetNft();
 
-  // Mock user properties (in a real app, this would come from props or context)
-  const userProperties: Property[] = [
-    {
-      id: "1",
-      name: "Downtown Penthouse",
-      coordinates: [-74.006, 40.7128],
-      owner: "0x1234567890abcdef1234567890abcdef12345678",
-      price: 250,
-      images: [
-        "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400",
-      ],
-      area: 0,
-      description:
-        "Luxury penthouse in the heart of downtown with stunning city views.",
-    },
-    {
-      id: "2",
-      name: "Waterfront Villa",
-      coordinates: [-74.015, 40.708],
-      owner: "0x1234567890abcdef1234567890abcdef12345678",
-      price: 180,
-      images: [
-        "https://images.unsplash.com/photo-1551038247-3d9af20df552?w=400",
-      ],
-      area: 0,
-      description:
-        "Beautiful waterfront property with private dock and panoramic views.",
-    },
-  ];
+  useEffect(() => {
+    if (!currentAccount) return;
 
-  const handleConfirm = () => {
+    const fetchOwnedNFT = async () => {
+      const userNfts = await get_all_nfts(currentAccount.address);
+      setNfts(userNfts);
+    };
+
+    fetchOwnedNFT();
+  }, [currentAccount?.address]);
+
+  // Effect to observe the digest value from the hook and update UI accordingly
+  useEffect(() => {
+    if (digest) {
+      toast("Property NFT listed successfully!", {
+        description: `Txn: ${formatDigest(digest)}`,
+        action: {
+          label: "View",
+          onClick: () =>
+            window.open(`https://suiscan.xyz/testnet/tx/${digest}`, "_blank"),
+        },
+        style: {
+          backgroundColor: "#0986f5",
+        },
+      });
+
+      // Reset form
+      setSelectedPropertyId("");
+      setListingPrice("");
+    }
+  }, [digest]);
+
+  // Effect to observe errors from the hook
+  useEffect(() => {
+    if (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to list property NFT"
+      );
+    }
+  }, [error]);
+
+  const handleConfirm = async () => {
     if (!selectedPropertyId || !listingPrice) return;
 
-    onConfirm({
-      propertyId: selectedPropertyId,
-      price: parseFloat(listingPrice),
-    });
+    console.log(selectedPropertyId, parseFloat(listingPrice));
 
-    // Reset form
-    setSelectedPropertyId("");
-    setListingPrice("");
+    await sign_to_list(selectedPropertyId, parseFloat(listingPrice));
   };
 
-  const selectedProperty = userProperties.find(
-    (p) => p.id === selectedPropertyId
-  );
+  const selectedProperty = nfts.find((p) => p.id === selectedPropertyId);
+
+  const unlistProperties = nfts.filter((p) => !p.is_listed);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -108,11 +118,15 @@ const ListPropertyModal = ({
                 <SelectValue placeholder="Choose a property to list" />
               </SelectTrigger>
               <SelectContent>
-                {userProperties.map((property) => (
-                  <SelectItem key={property.id} value={property.id}>
-                    {property.name}
-                  </SelectItem>
-                ))}
+                {unlistProperties.length > 0 ? (
+                  unlistProperties.map((property) => (
+                    <SelectItem key={property.id} value={property.id}>
+                      {property.name}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectValue placeholder="No properties to list" />
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -121,9 +135,9 @@ const ListPropertyModal = ({
           {selectedProperty && (
             <Card className="p-4 bg-gray-800/50 border-gray-600">
               <div className="flex space-x-3">
-                {selectedProperty.images && (
+                {selectedProperty.property_info.images && (
                   <img
-                    src={selectedProperty.images[0]}
+                    src={selectedProperty.property_info.images[0]}
                     alt={selectedProperty.name}
                     className="w-16 h-16 object-cover rounded-lg"
                   />
@@ -133,11 +147,11 @@ const ListPropertyModal = ({
                     {selectedProperty.name}
                   </h4>
                   <p className="text-sm text-gray-400 line-clamp-2">
-                    {selectedProperty.description}
+                    {selectedProperty.property_info.description}
                   </p>
                   <p className="text-xs text-gray-500 font-mono mt-1">
-                    {selectedProperty.coordinates[1].toFixed(4)},{" "}
-                    {selectedProperty.coordinates[0].toFixed(4)}
+                    {selectedProperty.property_info.coordinates[1].toFixed(4)},{" "}
+                    {selectedProperty.property_info.coordinates[0].toFixed(4)}
                   </p>
                 </div>
               </div>
@@ -200,10 +214,10 @@ const ListPropertyModal = ({
             {currentAccount ? (
               <Button
                 onClick={handleConfirm}
-                disabled={!selectedPropertyId || !listingPrice}
+                disabled={!selectedPropertyId || !listingPrice || isLoading}
                 className="flex-1 bg-gradient-web3 hover:opacity-90 disabled:opacity-50"
               >
-                List Property
+                {isLoading ? "Listing..." : "List Property"}
               </Button>
             ) : (
               <CustomBtn className="flex-1 w-full" />

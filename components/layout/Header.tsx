@@ -20,7 +20,9 @@ const Header = () => {
           <Map className="w-10 h-10 text-white" />
           <div className="flex flex-col">
             <h1 className="text-xl font-bold text-white">RealEstate</h1>
-            <p className="text-xs text-gray-400">Sui Blockchain DEX</p>
+            <p className="text-xs text-gray-400">
+              Blockchain DEX for RealEstate
+            </p>
           </div>
         </div>
 

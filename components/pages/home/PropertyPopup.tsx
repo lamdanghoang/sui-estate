@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, User } from "lucide-react";
-import { Property } from "@/types/interface";
+import { NFTFieldProps } from "@/hooks/usePropertiesContract";
 
 interface PopupProps {
-  property: Property;
-  onSelectProperty: (value: Property | null) => void;
+  property: NFTFieldProps;
+  onSelectProperty: (value: NFTFieldProps | null) => void;
 }
 
 const PropertyPopup = ({ property, onSelectProperty }: PopupProps) => {
@@ -27,9 +27,9 @@ const PropertyPopup = ({ property, onSelectProperty }: PopupProps) => {
         </Button>
       </div>
 
-      {property.images && (
+      {property.image_url && (
         <img
-          src={property.images[0]}
+          src={property.image_url}
           alt={property.name}
           className="w-full h-32 object-cover rounded-lg mb-3"
         />
@@ -38,7 +38,7 @@ const PropertyPopup = ({ property, onSelectProperty }: PopupProps) => {
       <div className="space-y-2 text-sm mb-4">
         <div className="flex items-center space-x-2">
           <User className="w-4 h-4 text-gray-400" />
-          <span className="text-gray-300">Owner:</span>
+          <span className="text-gray-400">Owner:</span>
           <span className=" font-mono text-xs">
             {property.owner.slice(0, 6)}...
             {property.owner.slice(-4)}
@@ -46,12 +46,12 @@ const PropertyPopup = ({ property, onSelectProperty }: PopupProps) => {
         </div>
         <div className="flex items-center space-x-2">
           <DollarSign className="w-4 h-4 text-green-400" />
-          <span className="text-gray-300">Price:</span>
+          <span className="text-gray-400">Price:</span>
           <Badge variant="outline" className="text-green-400 border-green-400">
-            {property.price} SUI
+            {property.listing_price} SUI
           </Badge>
         </div>
-        {property.isListed && (
+        {property.is_listed && (
           <Badge className="bg-green-500/20 text-green-400 border-green-400">
             Listed for Sale
           </Badge>
@@ -59,7 +59,7 @@ const PropertyPopup = ({ property, onSelectProperty }: PopupProps) => {
       </div>
 
       <div className="flex space-x-2">
-        {property.isListed ? (
+        {property.is_listed ? (
           <Button size="sm" className="flex-1 bg-gradient-web3">
             Buy Property
           </Button>

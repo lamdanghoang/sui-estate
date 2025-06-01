@@ -75,6 +75,8 @@ const ListPropertyModal = ({ isOpen, onClose, id }: ListPropertyModalProps) => {
         },
       });
 
+      onClose();
+
       // Reset form
       setSelectedPropertyId("");
       setListingPrice("");

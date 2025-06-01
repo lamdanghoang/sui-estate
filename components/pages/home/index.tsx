@@ -1,9 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import MintModal from "@/components/MintModal";
 import { Property } from "@/types/interface";
+import { NFTFieldProps, useGetNft } from "@/hooks/usePropertiesContract";
+import { getPropertyNFTs } from "@/helpers/api";
 
 const MapViewComponent = dynamic(() => import("@/components/map/Map"), {
   ssr: false, // Prevents server-side rendering
@@ -13,48 +15,28 @@ const HomePage = () => {
   const [selectedCoordinates, setSelectedCoordinates] =
     useState<[number, number]>();
   const [isMintModalOpen, setIsMintModalOpen] = useState(false);
-  // const [properties, setProperties] = useState<Property[]>([
-  const properties: Property[] = [
-    {
-      id: "1",
-      name: "Central Park View",
-      coordinates: [-73.9712, 40.7831],
-      owner: "0xabcdef1234567890abcdef1234567890abcdef12",
-      price: 150,
-      images: [
-        "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400",
-      ],
-      description: "Stunning property overlooking Central Park",
-      area: 0,
-      isListed: false,
-    },
-    {
-      id: "2",
-      name: "Brooklyn Bridge Loft",
-      coordinates: [-73.9969, 40.7061],
-      owner: "0x1234567890abcdef1234567890abcdef12345678",
-      price: 200,
-      images: [
-        "https://images.unsplash.com/photo-1551038247-3d9af20df552?w=400",
-      ],
-      description: "Modern loft with Brooklyn Bridge views",
-      area: 0,
-      isListed: true,
-    },
-    {
-      id: "3",
-      name: "Financial District Office",
-      coordinates: [-74.0123, 40.7074],
-      owner: "0xfedcba0987654321fedcba0987654321fedcba09",
-      price: 300,
-      images: [
-        "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=400",
-      ],
-      description: "Prime commercial real estate in Financial District",
-      area: 0,
-      isListed: true,
-    },
-  ];
+  const [allProperties, setAllProperties] = useState<NFTFieldProps[]>([]);
+  const { get_nft_fields } = useGetNft();
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const properties = await getPropertyNFTs({ is_listed: false });
+        const nfts = await Promise.all(
+          properties.data.map(async (nft: { object_id: string }) => {
+            const nftFields = await get_nft_fields(nft.object_id);
+            return nftFields;
+          })
+        );
+        setAllProperties(
+          nfts.filter((nft): nft is NFTFieldProps => nft !== null)
+        );
+      } catch (error) {
+        console.error("Error fetching property nfts:", error);
+      }
+    };
+    fetchProperties();
+  }, []);
 
   const handleCoordinateSelect = (coordinates: [number, number]) => {
     setSelectedCoordinates(coordinates);
@@ -72,7 +54,7 @@ const HomePage = () => {
         <MapViewComponent
           onCoordinateSelect={handleCoordinateSelect}
           onPropertySelect={handlePropertySelect}
-          properties={properties}
+          properties={allProperties}
           selectedCoordinates={selectedCoordinates}
         />
       </div>

@@ -19,6 +19,7 @@ import ListPropertyModal from "@/components/pages/marketplace/ListPropertyModal"
 // import { Property } from "@/types/interface";
 import { getPropertyNFTs } from "@/helpers/api";
 import { NFTFieldProps, useGetNft } from "@/hooks/usePropertiesContract";
+import { useCurrentAccount } from "@mysten/dapp-kit";
 
 const MarketplacePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,11 +31,12 @@ const MarketplacePage = () => {
   // );
   const [listedProperties, setListedProperties] = useState<NFTFieldProps[]>([]);
   const { get_nft_fields } = useGetNft();
+  const currentAccount = useCurrentAccount();
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const properties = await getPropertyNFTs();
+        const properties = await getPropertyNFTs({ is_listed: true });
         const listedNFTs = await Promise.all(
           properties.data.map(async (nft: { object_id: string }) => {
             const nftFields = await get_nft_fields(nft.object_id);
@@ -212,7 +214,7 @@ const MarketplacePage = () => {
                   <PropertyCard
                     key={property.id}
                     property={property}
-                    isOwned={false}
+                    isOwned={property.owner === currentAccount?.address}
                     isListed={property.is_listed}
                     onViewOnMap={handleViewOnMap}
                     // onBuy={handleBuyProperty}
@@ -223,7 +225,7 @@ const MarketplacePage = () => {
           ) : (
             <Card className="p-12 text-center glassmorphism border-gray-700">
               <Store className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <h3 className="text-xl font-semibold mb-2">
                 No Properties Found
               </h3>
               <p className="text-gray-400 mb-6">

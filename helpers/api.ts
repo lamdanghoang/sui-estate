@@ -33,8 +33,14 @@ export const storeImageFile = async (file: File): Promise<string> => {
   throw new Error(data.error.error_msg);
 };
 
-export const getPropertyNFTs = async () => {
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/nfts?is_listed=true`;
+export const getPropertyNFTs = async ({
+  is_listed,
+}: {
+  is_listed: boolean;
+}) => {
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/nfts${
+    is_listed ? "?is_listed=true" : ""
+  }`;
   try {
     const response = await fetch(url);
 

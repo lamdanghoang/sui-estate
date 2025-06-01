@@ -16,6 +16,13 @@ import * as locator from "@arcgis/core/rest/locator";
 import SearchBar from "../pages/home/SearchBar";
 import PropertyPopup from "../pages/home/PropertyPopup";
 import { Property } from "@/types/interface";
+import { NFTFieldProps } from "@/hooks/usePropertiesContract";
+
+interface HoverPopupState {
+  x: number;
+  y: number;
+  property: NFTFieldProps | null;
+}
 
 interface MapViewComponentProps {
   center?: {
@@ -25,16 +32,16 @@ interface MapViewComponentProps {
   };
   onCoordinateSelect: (coordinates: [number, number]) => void;
   onPropertySelect: (property: Property) => void;
-  properties: Property[];
+  properties: NFTFieldProps[];
   selectedCoordinates?: [number, number];
 }
 
 const MapViewComponent = ({
   center = {
-    lon: -74.006,
-    lat: 40.7128,
-    zoom: 12,
-  }, // New York City
+    lon: 106.6522,
+    lat: 10.8041,
+    zoom: 15,
+  },
   onCoordinateSelect,
   onPropertySelect,
   properties,
@@ -45,10 +52,14 @@ const MapViewComponent = ({
   const [graphicsLayer, setGraphicsLayer] = useState<GraphicsLayer | null>(
     null
   );
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(
-    null
-  );
+  const [selectedProperty, setSelectedProperty] =
+    useState<NFTFieldProps | null>(null);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [hoverPopup, setHoverPopup] = useState<HoverPopupState>({
+    x: 0,
+    y: 0,
+    property: null,
+  });
 
   // Initialize map
   useEffect(() => {
@@ -74,6 +85,31 @@ const MapViewComponent = ({
     // Store view and graphics layer
     setView(mapView);
     setGraphicsLayer(layer);
+
+    // Add pointer move event for hover
+    mapView.on("pointer-move", async (event) => {
+      try {
+        const hitResponse = await mapView.hitTest(event);
+        const result = hitResponse.results[0];
+
+        if (
+          result &&
+          result.type === "graphic" &&
+          result.graphic.attributes?.property
+        ) {
+          const property = result.graphic.attributes.property as NFTFieldProps;
+          setHoverPopup({
+            x: event.x,
+            y: event.y - 10,
+            property: property,
+          });
+        } else {
+          setHoverPopup({ x: 0, y: 0, property: null });
+        }
+      } catch (error) {
+        console.error("Error during hit test:", error);
+      }
+    });
 
     // Add click handler for coordinate selection
     mapView.on("click", (event) => {
@@ -119,7 +155,7 @@ const MapViewComponent = ({
     };
   }, []);
 
-  const drawProperties = (properties: Property[]) => {
+  const drawProperties = (properties: NFTFieldProps[]) => {
     if (!graphicsLayer) return;
 
     graphicsLayer.removeAll();
@@ -127,12 +163,12 @@ const MapViewComponent = ({
     // Add property markers
     properties.forEach((property) => {
       const point = new Point({
-        longitude: property.coordinates[0],
-        latitude: property.coordinates[1],
+        longitude: property.property_info.coordinates[0],
+        latitude: property.property_info.coordinates[1],
       });
 
       const markerSymbol = new SimpleMarkerSymbol({
-        color: property.isListed ? [34, 197, 94, 0.8] : [102, 126, 234, 0.8],
+        color: property.is_listed ? [34, 197, 94, 0.8] : [102, 126, 234, 0.8],
         size: "16px",
         outline: {
           color: [255, 255, 255],
@@ -355,6 +391,32 @@ const MapViewComponent = ({
         onLocationSearch={handleLocationSearch}
         onCurrentLocation={handleCurrentLocation}
       />
+
+      {/* Hover Popup */}
+      {hoverPopup.property && (
+        <Card
+          className="absolute z-50 p-3 glassmorphism max-w-xs animate-fade-in"
+          style={{
+            left: hoverPopup.x,
+            top: hoverPopup.y,
+            transform: "translate(-50%, -100%)",
+          }}
+        >
+          <div className="space-y-2">
+            <h4 className="font-semibold">{hoverPopup.property.name}</h4>
+            <img
+              src={hoverPopup.property.image_url}
+              alt={hoverPopup.property.name}
+            />
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-400">Price:</span>
+              <span className="text-green-400 font-semibold">
+                {hoverPopup.property.listing_price} SUI
+              </span>
+            </div>
+          </div>
+        </Card>
+      )}
 
       {/* Selected Coordinates Display */}
       {selectedCoordinates && (

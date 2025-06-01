@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import PropertyCard from "@/components/pages/properties/PropertyCard";
 import { useCurrentAccount } from "@mysten/dapp-kit";
 import { NFTFieldProps, useGetNft } from "@/hooks/usePropertiesContract";
+import { CustomBtn } from "@/components/wallet/ConnectButton";
 
 const PropertiesPage = () => {
   const currentAccount = useCurrentAccount();
@@ -33,6 +34,18 @@ const PropertiesPage = () => {
     (sum, property) => sum + property.listing_price,
     0
   );
+
+  if (!currentAccount)
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20">
+        <div className="pt-20 px-4 pb-8">
+          <div className="mt-20 flex flex-col items-center gap-10">
+            <h1 className="font-bold">Connect your wallet first !</h1>
+            <CustomBtn />
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20">
@@ -115,7 +128,7 @@ const PropertiesPage = () => {
                   <PropertyCard
                     key={property.id}
                     property={property}
-                    isOwned={true}
+                    isOwned={property.owner === currentAccount.address}
                     isListed={property.is_listed}
                     onViewOnMap={handleViewOnMap}
                   />

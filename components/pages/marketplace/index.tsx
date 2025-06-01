@@ -15,8 +15,8 @@ import { Store, Search, TrendingUp, DollarSign, Filter } from "lucide-react";
 import { toast } from "sonner";
 import PropertyCard from "@/components/pages/properties/PropertyCard";
 import ListPropertyModal from "@/components/pages/marketplace/ListPropertyModal";
-import BuyPropertyModal from "@/components/pages/marketplace/BuyPropertyModal";
-import { Property } from "@/types/interface";
+// import BuyPropertyModal from "@/components/pages/marketplace/BuyPropertyModal";
+// import { Property } from "@/types/interface";
 import { getPropertyNFTs } from "@/helpers/api";
 import { NFTFieldProps, useGetNft } from "@/hooks/usePropertiesContract";
 
@@ -24,10 +24,10 @@ const MarketplacePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("price-low");
   const [isListModalOpen, setIsListModalOpen] = useState(false);
-  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(
-    null
-  );
+  // const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
+  // const [selectedProperty, setSelectedProperty] = useState<Property | null>(
+  //   null
+  // );
   const [listedProperties, setListedProperties] = useState<NFTFieldProps[]>([]);
   const { get_nft_fields } = useGetNft();
 
@@ -55,26 +55,14 @@ const MarketplacePage = () => {
     toast.info(`Viewing ${property.name} on map`);
   };
 
-  const handleBuyProperty = (property: NFTFieldProps) => {
-    setSelectedProperty({
-      ...property,
-      description: property.property_info.description,
-      coordinates: property.property_info.coordinates,
-      area: property.property_info.area,
-      price: property.listing_price,
-      images: property.property_info.images,
-    });
-    setIsBuyModalOpen(true);
-  };
-
   const handleListProperty = () => {
     setIsListModalOpen(true);
   };
 
-  const handleConfirmPurchase = (property: Property) => {
-    toast.success(`Successfully purchased ${property.name}!`);
-    setIsBuyModalOpen(false);
-  };
+  // const handleConfirmPurchase = (property: Property) => {
+  //   toast.success(`Successfully purchased ${property.name}!`);
+  //   setIsBuyModalOpen(false);
+  // };
 
   const filteredProperties = listedProperties
     .filter(
@@ -252,12 +240,12 @@ const MarketplacePage = () => {
         onClose={() => setIsListModalOpen(false)}
       />
 
-      <BuyPropertyModal
+      {/* <BuyPropertyModal
         isOpen={isBuyModalOpen}
         onClose={() => setIsBuyModalOpen(false)}
         property={selectedProperty}
         onConfirm={handleConfirmPurchase}
-      />
+      /> */}
     </div>
   );
 };

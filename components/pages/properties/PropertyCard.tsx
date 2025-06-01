@@ -20,8 +20,6 @@ const PropertyCard = ({
   isOwned,
   isListed,
   onViewOnMap,
-  onList,
-  onUnlist,
 }: PropertyCardProps) => {
   const [selectedPropertyId, setSelectedPropertyId] = useState("");
   const [isListModalOpen, setIsListModalOpen] = useState(false);

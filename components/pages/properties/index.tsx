@@ -29,11 +29,6 @@ const PropertiesPage = () => {
     // In a real app, this would navigate to the map view with the property highlighted
   };
 
-  const handleListProperty = (property: NFTFieldProps) => {
-    toast.info(`Initiating sale for ${property.name}`);
-    // In a real app, this would open a sell modal or navigate to sell page
-  };
-
   const totalValue = nfts.reduce(
     (sum, property) => sum + property.listing_price,
     0

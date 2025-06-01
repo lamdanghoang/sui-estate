@@ -3,22 +3,29 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, DollarSign, Eye, ShoppingCart } from "lucide-react";
 import { NFTFieldProps } from "@/hooks/usePropertiesContract";
+import ListPropertyModal from "../marketplace/ListPropertyModal";
+import { useState } from "react";
 
 interface PropertyCardProps {
   property: NFTFieldProps;
   isOwned?: boolean;
+  isListed?: boolean;
   onViewOnMap: (property: NFTFieldProps) => void;
-  onBuy?: (property: NFTFieldProps) => void;
-  onSell?: (property: NFTFieldProps) => void;
+  onList?: (property: NFTFieldProps) => void;
+  onUnlist?: (property: NFTFieldProps) => void;
 }
 
 const PropertyCard = ({
   property,
   isOwned,
+  isListed,
   onViewOnMap,
-  onBuy,
-  onSell,
+  onList,
+  onUnlist,
 }: PropertyCardProps) => {
+  const [selectedPropertyId, setSelectedPropertyId] = useState("");
+  const [isListModalOpen, setIsListModalOpen] = useState(false);
+
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
@@ -93,28 +100,34 @@ const PropertyCard = ({
             View on Map
           </Button>
 
-          {isOwned
-            ? onSell && (
-                <Button
-                  size="sm"
-                  onClick={() => onSell(property)}
-                  className="flex-1 bg-red-600 hover:bg-red-700 "
-                >
-                  Sell
-                </Button>
-              )
-            : onBuy && (
-                <Button
-                  size="sm"
-                  onClick={() => onBuy(property)}
-                  className="flex-1 bg-gradient-web3 hover:opacity-90"
-                >
-                  <ShoppingCart className="w-4 h-4 mr-1" />
-                  Buy
-                </Button>
-              )}
+          {isListed ? (
+            <Button
+              size="sm"
+              onClick={() => {}}
+              className="flex-1 bg-red-600 hover:bg-red-700 "
+            >
+              Unlist
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => {
+                setSelectedPropertyId(property.id);
+                setIsListModalOpen(true);
+              }}
+              className="flex-1 bg-gradient-web3 hover:opacity-90"
+            >
+              <ShoppingCart className="w-4 h-4 mr-1" />
+              List
+            </Button>
+          )}
         </div>
       </div>
+      <ListPropertyModal
+        id={selectedPropertyId}
+        isOpen={isListModalOpen}
+        onClose={() => setIsListModalOpen(false)}
+      />
     </Card>
   );
 };

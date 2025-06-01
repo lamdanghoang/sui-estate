@@ -5,60 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Home, TrendingUp, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 import PropertyCard from "@/components/pages/properties/PropertyCard";
-import { Property } from "@/types/interface";
 import { useCurrentAccount } from "@mysten/dapp-kit";
 import { NFTFieldProps, useGetNft } from "@/hooks/usePropertiesContract";
 
 const PropertiesPage = () => {
-  const [walletAddress] = useState(
-    "0x1234567890abcdef1234567890abcdef12345678"
-  );
   const currentAccount = useCurrentAccount();
   const { get_all_nfts } = useGetNft();
   const [nfts, setNfts] = useState<NFTFieldProps[]>([]);
-
-  // Mock user properties
-  const [userProperties] = useState<Property[]>([
-    {
-      id: "1",
-      name: "Downtown Penthouse",
-      coordinates: [-74.006, 40.7128],
-      owner: walletAddress,
-      price: 250,
-      images: [
-        "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400",
-      ],
-      area: 0,
-      description:
-        "Luxury penthouse in the heart of downtown with stunning city views.",
-    },
-    {
-      id: "2",
-      name: "Waterfront Villa",
-      coordinates: [-74.015, 40.708],
-      owner: walletAddress,
-      price: 180,
-      images: [
-        "https://images.unsplash.com/photo-1551038247-3d9af20df552?w=400",
-      ],
-      area: 0,
-      description:
-        "Beautiful waterfront property with private dock and panoramic views.",
-    },
-    {
-      id: "3",
-      name: "Modern Office Complex",
-      coordinates: [-74.012, 40.71],
-      owner: walletAddress,
-      price: 320,
-      images: [
-        "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=400",
-      ],
-      area: 0,
-      description:
-        "State-of-the-art office building in prime business district.",
-    },
-  ]);
 
   useEffect(() => {
     if (!currentAccount) return;
@@ -76,7 +29,7 @@ const PropertiesPage = () => {
     // In a real app, this would navigate to the map view with the property highlighted
   };
 
-  const handleSellProperty = (property: NFTFieldProps) => {
+  const handleListProperty = (property: NFTFieldProps) => {
     toast.info(`Initiating sale for ${property.name}`);
     // In a real app, this would open a sell modal or navigate to sell page
   };
@@ -139,9 +92,7 @@ const PropertiesPage = () => {
                 <div>
                   <p className="text-gray-400 text-sm">Avg. Property Value</p>
                   <p className="text-2xl font-bold text-gray-700">
-                    {userProperties.length > 0
-                      ? Math.round(totalValue / nfts.length)
-                      : 0}{" "}
+                    {nfts.length > 0 ? Math.round(totalValue / nfts.length) : 0}{" "}
                     SUI
                   </p>
                 </div>
@@ -170,8 +121,8 @@ const PropertiesPage = () => {
                     key={property.id}
                     property={property}
                     isOwned={true}
+                    isListed={property.is_listed}
                     onViewOnMap={handleViewOnMap}
-                    onSell={handleSellProperty}
                   />
                 ))}
               </div>
@@ -179,9 +130,7 @@ const PropertiesPage = () => {
           ) : (
             <Card className="p-12 text-center glassmorphism border-gray-700">
               <Home className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
-                No Properties Yet
-              </h3>
+              <h3 className="text-xl font-semibold mb-2">No Properties Yet</h3>
               <p className="text-gray-400 mb-6">
                 Start building your real estate portfolio by minting your first
                 property NFT.

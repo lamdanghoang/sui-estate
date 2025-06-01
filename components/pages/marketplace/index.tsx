@@ -165,7 +165,7 @@ const MarketplacePage = () => {
                 <div>
                   <p className="text-gray-400 text-sm">Average Price</p>
                   <p className="text-2xl font-bold text-gray-700">
-                    {averagePrice} SUI
+                    {averagePrice || 0} SUI
                   </p>
                 </div>
               </div>
@@ -225,8 +225,9 @@ const MarketplacePage = () => {
                     key={property.id}
                     property={property}
                     isOwned={false}
+                    isListed={property.is_listed}
                     onViewOnMap={handleViewOnMap}
-                    onBuy={handleBuyProperty}
+                    // onBuy={handleBuyProperty}
                   />
                 ))}
               </div>

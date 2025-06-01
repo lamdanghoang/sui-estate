@@ -29,17 +29,25 @@ import { toast } from "sonner";
 import { formatDigest } from "@mysten/sui/utils";
 
 interface ListPropertyModalProps {
+  id?: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const ListPropertyModal = ({ isOpen, onClose }: ListPropertyModalProps) => {
-  const [selectedPropertyId, setSelectedPropertyId] = useState("");
+const ListPropertyModal = ({ isOpen, onClose, id }: ListPropertyModalProps) => {
+  const [selectedPropertyId, setSelectedPropertyId] = useState(id);
   const [listingPrice, setListingPrice] = useState("");
   const [nfts, setNfts] = useState<NFTFieldProps[]>([]);
   const currentAccount = useCurrentAccount();
   const { sign_to_list, digest, error, isLoading } = useListNFT();
   const { get_all_nfts } = useGetNft();
+
+  // Effect to update selectedPropertyId when id prop changes
+  useEffect(() => {
+    if (id) {
+      setSelectedPropertyId(id);
+    }
+  }, [id]);
 
   useEffect(() => {
     if (!currentAccount) return;
@@ -135,9 +143,9 @@ const ListPropertyModal = ({ isOpen, onClose }: ListPropertyModalProps) => {
           {selectedProperty && (
             <Card className="p-4 bg-gray-800/50 border-gray-600">
               <div className="flex space-x-3">
-                {selectedProperty.property_info.images && (
+                {selectedProperty.image_url && (
                   <img
-                    src={selectedProperty.property_info.images[0]}
+                    src={selectedProperty.image_url}
                     alt={selectedProperty.name}
                     className="w-16 h-16 object-cover rounded-lg"
                   />

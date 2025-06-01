@@ -1,5 +1,5 @@
 export const storeImageFile = async (file: File): Promise<string> => {
-  const url = `${process.env.NEXT_PUBLIC_PUBLISHER}/v1/blobs?epochs=2`;
+  const url = `${process.env.NEXT_PUBLIC_PUBLISHER}/v1/blobs?epochs=10`;
 
   const response = await fetch(url, {
     method: "PUT",

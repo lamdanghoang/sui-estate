@@ -197,6 +197,7 @@ const MintModal = ({
         },
       });
       onClose();
+      setIsUploading(false);
     }
   }, [digest, objectId]);
 
@@ -210,6 +211,7 @@ const MintModal = ({
         ...prev,
         general: "Minting failed. Please try again.",
       }));
+      setIsUploading(false);
     }
   }, [error]);
 
@@ -534,13 +536,14 @@ const MintModal = ({
                 className="flex-1 bg-gradient-web3 hover:opacity-90"
                 disabled={
                   isLoading ||
+                  isUploading ||
                   !coordinates ||
                   Object.keys(errors).some(
                     (key) => errors[key as keyof FormErrors]
                   )
                 }
               >
-                {isLoading ? (
+                {isLoading || isUploading ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     <span>

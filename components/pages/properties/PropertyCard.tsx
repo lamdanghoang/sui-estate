@@ -2,11 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, DollarSign, Eye, ShoppingCart } from "lucide-react";
-import {
-  NFTFieldProps,
-  usePurchaseNFT,
-  useUnlistNFT,
-} from "@/hooks/usePropertiesContract";
+import { NFTFieldProps, useUnlistNFT } from "@/hooks/usePropertiesContract";
 import ListPropertyModal from "../marketplace/ListPropertyModal";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -34,12 +30,6 @@ const PropertyCard = ({
   const [isListModalOpen, setIsListModalOpen] = useState(false);
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
   const { sign_to_unlist, digest, error, isLoading } = useUnlistNFT();
-  const {
-    sign_to_purchase,
-    digest: buyDigest,
-    error: buyError,
-    isLoading: buyLoading,
-  } = usePurchaseNFT();
   const currentAccount = useCurrentAccount();
 
   // Effect to observe the digest value from the hook and update UI accordingly
@@ -67,34 +57,6 @@ const PropertyCard = ({
       );
     }
   }, [error]);
-
-  // Effect to observe the digest value from the hook and update UI accordingly
-  useEffect(() => {
-    if (buyDigest) {
-      toast("Property NFT purchased successfully!", {
-        description: `Txn: ${formatDigest(digest)}`,
-        action: {
-          label: "View",
-          onClick: () =>
-            window.open(`https://suiscan.xyz/testnet/tx/${digest}`, "_blank"),
-        },
-        style: {
-          backgroundColor: "#0986f5",
-        },
-      });
-    }
-  }, [buyDigest]);
-
-  // Effect to observe errors from the hook
-  useEffect(() => {
-    if (buyError) {
-      toast.error(
-        buyError instanceof Error
-          ? buyError.message
-          : "Failed to list property NFT"
-      );
-    }
-  }, [buyError]);
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -181,29 +143,42 @@ const PropertyCard = ({
                   {isLoading ? "Unlisting..." : "Unlist"}
                 </Button>
               ) : (
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    setSelectedPropertyId(property.id);
-                    setIsListModalOpen(true);
-                  }}
-                  className="flex-1 bg-gradient-web3 hover:opacity-90"
-                >
-                  <ShoppingCart className="w-4 h-4 mr-1" />
-                  List
-                </Button>
+                <>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setSelectedPropertyId(property.id);
+                      setIsListModalOpen(true);
+                    }}
+                    className="flex-1 bg-gradient-web3 hover:opacity-90"
+                  >
+                    <ShoppingCart className="w-4 h-4 mr-1" />
+                    List
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setSelectedPropertyId(property.id);
+                      setIsListModalOpen(true);
+                    }}
+                    className="flex-1 bg-gradient-web3 hover:opacity-90"
+                  >
+                    <ShoppingCart className="w-4 h-4 mr-1" />
+                    Transfer
+                  </Button>
+                </>
               )
             ) : (
               isListed && (
                 <Button
                   size="sm"
                   onClick={() => {
-                    sign_to_purchase(property.id, property.listing_price);
+                    setIsBuyModalOpen(true);
                   }}
                   className="flex-1 bg-green-600 hover:bg-green-700"
                 >
                   <DollarSign className="w-4 h-4 mr-1" />
-                  {buyLoading ? "Buying..." : "Buy"}
+                  Buy
                 </Button>
               )
             )

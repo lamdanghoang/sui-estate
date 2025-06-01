@@ -1,7 +1,13 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, DollarSign, Eye, ShoppingCart } from "lucide-react";
+import {
+  MapPin,
+  DollarSign,
+  Eye,
+  ShoppingCart,
+  ArrowLeftRight,
+} from "lucide-react";
 import { NFTFieldProps, useUnlistNFT } from "@/hooks/usePropertiesContract";
 import ListPropertyModal from "../marketplace/ListPropertyModal";
 import { useEffect, useState } from "react";
@@ -10,6 +16,7 @@ import { formatDigest } from "@mysten/sui/utils";
 import { useCurrentAccount } from "@mysten/dapp-kit";
 import { CustomBtn } from "@/components/wallet/ConnectButton";
 import BuyPropertyModal from "../marketplace/BuyPropertyModal";
+import TransferPropertyModal from "./TransferPropertyModal";
 
 interface PropertyCardProps {
   property: NFTFieldProps;
@@ -28,6 +35,7 @@ const PropertyCard = ({
 }: PropertyCardProps) => {
   const [selectedPropertyId, setSelectedPropertyId] = useState("");
   const [isListModalOpen, setIsListModalOpen] = useState(false);
+  const [isTransferModelOpen, setIsTransferModelOpen] = useState(false);
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
   const { sign_to_unlist, digest, error, isLoading } = useUnlistNFT();
   const currentAccount = useCurrentAccount();
@@ -159,11 +167,11 @@ const PropertyCard = ({
                     size="sm"
                     onClick={() => {
                       setSelectedPropertyId(property.id);
-                      setIsListModalOpen(true);
+                      setIsTransferModelOpen(true);
                     }}
                     className="flex-1 bg-gradient-web3 hover:opacity-90"
                   >
-                    <ShoppingCart className="w-4 h-4 mr-1" />
+                    <ArrowLeftRight className="w-4 h-4 mr-1" />
                     Transfer
                   </Button>
                 </>
@@ -196,6 +204,11 @@ const PropertyCard = ({
         id={selectedPropertyId}
         isOpen={isListModalOpen}
         onClose={() => setIsListModalOpen(false)}
+      />
+      <TransferPropertyModal
+        id={selectedPropertyId}
+        isOpen={isTransferModelOpen}
+        onClose={() => setIsTransferModelOpen(false)}
       />
     </Card>
   );

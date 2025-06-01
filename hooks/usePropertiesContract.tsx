@@ -435,6 +435,127 @@ export const useUnlistNFT = () => {
   };
 };
 
+export const useTransferNFT = () => {
+  const [digest, setDigest] = useState<string>("");
+  const [objectChanges, setObjectChanges] = useState<SuiObjectChange[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
+  const account = useCurrentAccount();
+
+  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const suiClient = useSuiClient();
+
+  // Function with extensive debugging added
+  const sign_to_transfer = async (nftId: string, recipient: string) => {
+    // Reset states
+    setError(null);
+    setIsLoading(true);
+    setObjectChanges([]);
+    setDigest("");
+
+    console.log("=== Transfer Transaction Started ===");
+
+    try {
+      console.log("Formatted values:", {
+        nftId,
+        recipient,
+        moduleId: getModuleId(),
+      });
+
+      const txb = new Transaction();
+
+      console.log("Creating transaction block...");
+
+      // Build the transaction
+      txb.moveCall({
+        target: `${getModuleId()}::transfer_nft`,
+        arguments: [txb.object(nftId), txb.pure.address(recipient)],
+      });
+
+      console.log("Transaction block created, signing and executing...");
+
+      // Execute the transaction
+      signAndExecuteTransaction(
+        { transaction: txb },
+        {
+          onSuccess: async (result) => {
+            console.log("Initial transaction execution successful");
+            console.log("Transaction digest:", result.digest);
+            setDigest(result.digest);
+
+            try {
+              console.log("Waiting for transaction confirmation...");
+              const txResponse = await suiClient.waitForTransaction({
+                digest: result.digest,
+                options: {
+                  showEffects: true,
+                  showEvents: true,
+                  showObjectChanges: true,
+                },
+              });
+
+              console.log("Transaction confirmed");
+
+              // Full response logging for debugging (commented out for production)
+              // console.log("Full transaction response:", JSON.stringify(txResponse, null, 2));
+
+              // Check status safely
+              const txStatus = txResponse.effects?.status?.status;
+              console.log("Transaction status:", txStatus);
+
+              if (txStatus !== "success") {
+                const errorMessage =
+                  txResponse.effects?.status?.error || "Unknown error";
+                console.error("Transaction failed with status:", errorMessage);
+                throw new Error(`Transaction failed: ${errorMessage}`);
+              }
+
+              // Process object changes
+              if (
+                Array.isArray(txResponse.objectChanges) &&
+                txResponse.objectChanges.length > 0
+              ) {
+                console.log(
+                  `Found ${txResponse.objectChanges.length} object changes`
+                );
+                setObjectChanges(txResponse.objectChanges);
+              } else {
+                console.log("No object changes in transaction response");
+              }
+
+              console.log("=== Transfer NFT Complete ===");
+            } catch (confirmError) {
+              console.error("Error confirming transaction:", confirmError);
+              setError(new Error(`Transaction confirmation failed`));
+            } finally {
+              setIsLoading(false);
+            }
+          },
+          onError: (execError) => {
+            console.error("Transaction execution failed:", execError);
+            setError(
+              new Error(`Failed to execute transaction: ${execError.message}`)
+            );
+            setIsLoading(false);
+          },
+        }
+      );
+    } catch (setupError) {
+      console.error("Error setting up transaction:", setupError);
+      setError(new Error(`Transaction setup failed: `));
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    sign_to_transfer,
+    digest,
+    objectChanges,
+    isLoading,
+    error,
+  };
+};
+
 export const usePurchaseNFT = () => {
   const [digest, setDigest] = useState<string>("");
   const [objectChanges, setObjectChanges] = useState<SuiObjectChange[]>([]);

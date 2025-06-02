@@ -2,8 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, User } from "lucide-react";
+import { DollarSign, SquareArrowOutUpRight, User } from "lucide-react";
 import { NFTFieldProps } from "@/hooks/usePropertiesContract";
+import Link from "next/link";
 
 interface PopupProps {
   property: NFTFieldProps;
@@ -36,13 +37,22 @@ const PropertyPopup = ({ property, onSelectProperty }: PopupProps) => {
       )}
 
       <div className="space-y-2 text-sm mb-4">
-        <div className="flex items-center space-x-2">
-          <User className="w-4 h-4 text-gray-400" />
-          <span className="text-gray-400">Owner:</span>
-          <span className=" font-mono text-xs">
-            {property.owner.slice(0, 6)}...
-            {property.owner.slice(-4)}
-          </span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <User className="w-4 h-4 text-gray-400" />
+            <span className="text-gray-400">Owner:</span>
+            <span className=" font-mono text-xs">
+              {property.owner.slice(0, 6)}...
+              {property.owner.slice(-4)}
+            </span>
+          </div>
+          <Link
+            href={`https://suiscan.xyz/testnet/object/${property.id}`}
+            target="_blank"
+            className="cursor-pointer"
+          >
+            <SquareArrowOutUpRight className="w-3 h-3" />
+          </Link>
         </div>
         <div className="flex items-center space-x-2">
           <DollarSign className="w-4 h-4 text-green-400" />

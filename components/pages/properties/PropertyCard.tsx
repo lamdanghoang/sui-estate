@@ -7,6 +7,7 @@ import {
   Eye,
   ShoppingCart,
   ArrowLeftRight,
+  SquareArrowOutUpRight,
 } from "lucide-react";
 import { NFTFieldProps, useUnlistNFT } from "@/hooks/usePropertiesContract";
 import ListPropertyModal from "../marketplace/ListPropertyModal";
@@ -17,6 +18,7 @@ import { useCurrentAccount } from "@mysten/dapp-kit";
 import { CustomBtn } from "@/components/wallet/ConnectButton";
 import BuyPropertyModal from "../marketplace/BuyPropertyModal";
 import TransferPropertyModal from "./TransferPropertyModal";
+import Link from "next/link";
 
 interface PropertyCardProps {
   property: NFTFieldProps;
@@ -119,12 +121,19 @@ const PropertyCard = ({
             <span className=" font-mono">{formatAddress(property.owner)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-1">
+            <div className="flex gap-1 items-center">
               <DollarSign className="w-4 h-4 text-green-400" />
               <span className="text-green-400 font-semibold">
                 {property.listing_price} SUI
               </span>
             </div>
+            <Link
+              href={`https://suiscan.xyz/testnet/object/${property.id}`}
+              target="_blank"
+              className=" cursor-pointer"
+            >
+              <SquareArrowOutUpRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
 
